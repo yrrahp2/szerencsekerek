@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Szerencsekerék 1.0</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            background-color: #003399;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+        }
+
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+
+        h1 {
+            font-size: 42px;
+            text-align: center;
+        }
+
+
+        .panel {
+            background-color: white;
+            color: #111111;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+
+        label {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 20px;
+            padding: 12px;
+        }
+
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+
+        button {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 14px;
+            margin-top: 24px;
+            cursor: pointer;
+        }
+
+
+        button:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 4px solid #ffcc00;
+            outline-offset: 3px;
+        }
+
+
+        button:disabled,
+        input:disabled,
+        select:disabled,
+        textarea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+        #jatekosLista,
+        #jatekPontLista,
+        #chatLista {
+            font-size: 20px;
+            padding-left: 0;
+            list-style: none;
+        }
+
+
+        #jatekosLista li,
+        #jatekPontLista li,
+        #chatLista li {
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            border-radius: 8px;
+        }
+
+
+        #jatekPontLista li.soronLevoJatekos {
+            font-weight: bold;
+            border: 3px solid #003399;
+            background-color: #eaf0ff;
+            font-size: 22px;
+        }
+
+
+        #jatekosLetszam {
+            font-weight: bold;
+        }
+
+
+        #soronLevoKijelzes {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+
+        #kategoriaKijelzes {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+
+        #betuSzamKijelzes {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        #feladvanyKijelzes {
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+
+        /* ======================================== */
+        /* VÁRAKOZÓ ZENE */
+        /* ======================================== */
+
+        #zenePanel {
+            margin-top: 25px;
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 3px solid #003399;
+            border-radius: 10px;
+            background-color: #f5f8ff;
+        }
+
+
+        #zenePanel h3 {
+            font-size: 26px;
+            margin-top: 0;
+        }
+
+
+        #zenePanel p {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+
+        #zeneGomb {
+            margin-top: 12px;
+        }
+
+
+        /* ======================================== */
+        /* KATEGÓRIAVÁLASZTÁS */
+        /* ======================================== */
+
+        #kategoriavalasztasPanel {
+            margin-top: 25px;
+            margin-bottom: 30px;
+            padding: 22px;
+            border: 3px solid #003399;
+            border-radius: 10px;
+            background-color: #f5f8ff;
+        }
+
+
+        #kategoriavalasztasPanel h3 {
+            font-size: 26px;
+            margin-top: 0;
+        }
+
+
+        #kategoriavalasztasInfo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        #kategoriaUzenet {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        /* ======================================== */
+        /* KATEGÓRIA MEGERŐSÍTÉS */
+        /* ======================================== */
+
+        #kategoriaMegerositesPanel {
+            margin-top: 25px;
+            margin-bottom: 30px;
+            padding: 22px;
+            border: 3px solid #003399;
+            border-radius: 10px;
+            background-color: #f5f8ff;
+        }
+
+
+        #kategoriaMegerositesPanel h3 {
+            font-size: 26px;
+            margin-top: 0;
+        }
+
+
+        #kategoriaMegerositesSzoveg {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+
+        #kategoriaMegerositesUzenet {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        /* ======================================== */
+        /* SZABAD KATEGÓRIA */
+        /* ======================================== */
+
+        #szabadFeladvanyPanel {
+            margin-top: 25px;
+            margin-bottom: 30px;
+            padding: 22px;
+            border: 3px solid #003399;
+            border-radius: 10px;
+            background-color: #f5f8ff;
+        }
+
+
+        #szabadFeladvanyPanel h3 {
+            font-size: 26px;
+            margin-top: 0;
+        }
+
+
+        #szabadFeladvanyUzenet {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        /* ======================================== */
+        /* CHAT */
+        /* ======================================== */
+
+        #chatPanel {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 3px solid #003399;
+        }
+
+
+        #chatPanel h3 {
+            font-size: 26px;
+        }
+
+
+        #chatLista {
+            max-height: 280px;
+            overflow-y: auto;
+            border: 2px solid #cccccc;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #f8f8f8;
+        }
+
+
+        #chatLista li {
+            background-color: white;
+            border: 1px solid #dddddd;
+            overflow-wrap: anywhere;
+        }
+
+
+        #chatUzenet {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+
+        /* ======================================== */
+        /* SZERENCSEKERÉK */
+        /* ======================================== */
+
+        #kerekSzekcio {
+            margin-top: 28px;
+            text-align: center;
+        }
+
+
+        #kerekSzekcio h3 {
+            font-size: 26px;
+            margin-bottom: 12px;
+        }
+
+
+        #kerekDoboz {
+            position: relative;
+            width: 380px;
+            height: 400px;
+            max-width: 100%;
+            margin: 0 auto 10px auto;
+            overflow: visible;
+        }
+
+
+        #kerekMutato {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 34px solid #111111;
+
+            z-index: 10;
+        }
+
+
+        #kerekGrafika {
+            position: absolute;
+            left: 50%;
+            top: 35px;
+
+            width: 360px;
+            height: 360px;
+
+            transform: translateX(-50%) rotate(0deg);
+            transform-origin: center center;
+
+            border-radius: 50%;
+            border: 6px solid #222222;
+
+            background:
+                conic-gradient(
+                    #e53935 0deg 30deg,
+                    #ffb300 30deg 60deg,
+                    #43a047 60deg 90deg,
+                    #1e88e5 90deg 120deg,
+                    #8e24aa 120deg 150deg,
+                    #00acc1 150deg 180deg,
+                    #f4511e 180deg 210deg,
+                    #7cb342 210deg 240deg,
+                    #3949ab 240deg 270deg,
+                    #d81b60 270deg 300deg,
+                    #212121 300deg 330deg,
+                    #757575 330deg 360deg
+                );
+
+            box-shadow:
+                0 5px 14px
+                rgba(0, 0, 0, 0.35);
+
+            overflow: hidden;
+        }
+
+
+        #kerekGrafika::after {
+            content: "";
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background-color: white;
+            border: 5px solid #222222;
+            z-index: 3;
+        }
+
+
+        #kerekFeliratok {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+
+        .kerekFelirat {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+
+            text-shadow:
+                1px 1px 2px #000000,
+                -1px -1px 2px #000000,
+                1px -1px 2px #000000,
+                -1px 1px 2px #000000;
+
+            z-index: 4;
+        }
+
+
+        #kerekEredmeny {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 16px;
+            min-height: 30px;
+        }
+
+
+        /* ======================================== */
+        /* BETŰ ÉS MEGFEJTÉS */
+        /* ======================================== */
+
+        #betuSzekcio,
+        #megfejtesSzekcio {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px solid #dddddd;
+        }
+
+
+        #betuUzenet,
+        #megfejtesUzenet {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        #hasznaltBetuk,
+        #hibasBetuk,
+        #hibasMegfejtesek {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+
+        /* ======================================== */
+        /* KÉPERNYŐOLVASÓ */
+        /* ======================================== */
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+
+        .keszitok {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 18px;
+        }
+
+
+        @media (max-width: 520px) {
+
+            body {
+                padding: 15px;
+            }
+
+
+            .panel {
+                padding: 18px;
+            }
+
+
+            h1 {
+                font-size: 32px;
+            }
+
+
+            #kerekDoboz {
+                width: 310px;
+                height: 330px;
+            }
+
+
+            #kerekGrafika {
+                width: 290px;
+                height: 290px;
+            }
+
+
+            .kerekFelirat {
+                font-size: 12px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<main>
+
+
+    <h1>
+        Szerencsekerék 1.0
+    </h1>
+
+
+    <!-- ========================================= -->
+    <!-- BELÉPÉS -->
+    <!-- ========================================= -->
+
+    <section
+        id="belepes"
+        class="panel"
+        aria-labelledby="belepesCim"
+    >
+
+        <h2 id="belepesCim">
+            Belépés a játékba
+        </h2>
+
+
+        <label for="jatekosNev">
+            Játékos neve
+        </label>
+
+
+        <input
+            type="text"
+            id="jatekosNev"
+            name="jatekosNev"
+            autocomplete="name"
+        >
+
+
+        <label for="szobaNev">
+            Szoba neve
+        </label>
+
+
+        <input
+            type="text"
+            id="szobaNev"
+            name="szobaNev"
+            autocomplete="off"
+        >
+
+
+        <button
+            type="button"
+            id="mindenkiSzobaGomb"
+        >
+            Mindenki szobája
+        </button>
+
+
+        <button
+            type="button"
+            id="csatlakozasGomb"
+        >
+            Csatlakozás
+        </button>
+
+
+        <p
+            id="uzenet"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+        ></p>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- JÁTÉKTÉR -->
+    <!-- ========================================= -->
+
+    <section
+        id="jatekTer"
+        class="panel"
+        hidden
+        aria-labelledby="jatekCim"
+    >
+
+        <h2
+            id="jatekCim"
+            tabindex="-1"
+        >
+            Játékszoba
+        </h2>
+
+
+        <p
+            id="jatekInfo"
+            role="status"
+            aria-live="polite"
+        ></p>
+
+
+        <!-- ===================================== -->
+        <!-- JÁTÉKSZOBA -->
+        <!-- ===================================== -->
+
+        <section
+            id="szobaPanel"
+            aria-labelledby="szobaCim"
+        >
+
+            <h3
+                id="szobaCim"
+                tabindex="-1"
+            >
+                Játékszoba
+            </h3>
+
+
+            <p>
+                Szoba:
+                <strong id="szobaKijelzes"></strong>
+            </p>
+
+
+            <p>
+                Játékosok száma:
+                <span id="jatekosLetszam">0</span>
+            </p>
+
+
+            <h4>
+                Játékosok
+            </h4>
+
+
+            <ul id="jatekosLista"></ul>
+
+
+            <button
+                type="button"
+                id="jatekInditasGomb"
+                hidden
+            >
+                Játék indítása
+            </button>
+
+
+            <p
+                id="szobaUzenet"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+            ></p>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- VÁRAKOZÓ ZENE -->
+        <!-- ===================================== -->
+
+        <section
+            id="zenePanel"
+            aria-labelledby="zeneCim"
+        >
+
+            <h3 id="zeneCim">
+                Várakozó zene
+            </h3>
+
+
+            <p>
+                A várakozó zene csak addig szól,
+                amíg a játékosok a játékszobában
+                várakoznak. A játék indulásakor
+                automatikusan elhallgat.
+            </p>
+
+
+            <button
+                type="button"
+                id="zeneGomb"
+                aria-pressed="true"
+            >
+                Zene ki
+            </button>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- CHAT SZOBA -->
+        <!-- ===================================== -->
+
+        <section
+            id="chatPanel"
+            hidden
+            aria-labelledby="chatCim"
+        >
+
+            <h3 id="chatCim">
+                Chat szoba
+            </h3>
+
+
+            <p>
+                Itt a játékszoba résztvevői
+                beszélgethetnek egymással.
+            </p>
+
+
+            <ul
+                id="chatLista"
+                aria-label="Chat üzenetek"
+                aria-live="polite"
+                aria-relevant="additions"
+            ></ul>
+
+
+            <label for="chatMezo">
+                Üzenet
+            </label>
+
+
+            <input
+                type="text"
+                id="chatMezo"
+                autocomplete="off"
+                maxlength="500"
+            >
+
+
+            <button
+                type="button"
+                id="chatKuldesGomb"
+            >
+                Küldés
+            </button>
+
+
+            <p
+                id="chatUzenet"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+            ></p>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- KATEGÓRIAVÁLASZTÁS -->
+        <!-- ===================================== -->
+
+        <section
+            id="kategoriavalasztasPanel"
+            hidden
+            aria-labelledby="kategoriavalasztasCim"
+        >
+
+            <h3
+                id="kategoriavalasztasCim"
+                tabindex="-1"
+            >
+                Kategóriaválasztás
+            </h3>
+
+
+            <p id="kategoriavalasztasInfo">
+                Válasszon kategóriát a következő
+                feladványhoz.
+            </p>
+
+
+            <label for="kategoriaValaszto">
+                Kategória
+            </label>
+
+
+            <select
+                id="kategoriaValaszto"
+                disabled
+            >
+                <option>
+                    Kategóriák betöltése...
+                </option>
+            </select>
+
+
+            <button
+                type="button"
+                id="kategoriaValasztasGomb"
+                disabled
+            >
+                Kategória kiválasztása
+            </button>
+
+
+            <p
+                id="kategoriaUzenet"
+                role="status"
+                aria-live="assertive"
+                aria-atomic="true"
+            ></p>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- KATEGÓRIA MEGERŐSÍTÉSE -->
+        <!-- ===================================== -->
+
+        <section
+            id="kategoriaMegerositesPanel"
+            hidden
+            aria-labelledby="kategoriaMegerositesCim"
+        >
+
+            <h3
+                id="kategoriaMegerositesCim"
+                tabindex="-1"
+            >
+                Kategória megerősítése
+            </h3>
+
+
+            <p>
+                Kiválasztott kategória:
+            </p>
+
+
+            <p
+                id="kategoriaMegerositesSzoveg"
+                aria-live="polite"
+            ></p>
+
+
+            <button
+                type="button"
+                id="kategoriaVeglegesitesGomb"
+            >
+                Kategória véglegesítése
+            </button>
+
+
+            <button
+                type="button"
+                id="kategoriaMasikGomb"
+            >
+                Másik kategóriát választok
+            </button>
+
+
+            <p
+                id="kategoriaMegerositesUzenet"
+                role="status"
+                aria-live="assertive"
+                aria-atomic="true"
+            ></p>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- SZABAD KATEGÓRIA -->
+        <!-- ===================================== -->
+
+        <section
+            id="szabadFeladvanyPanel"
+            hidden
+            aria-labelledby="szabadFeladvanyCim"
+        >
+
+            <h3
+                id="szabadFeladvanyCim"
+                tabindex="-1"
+            >
+                Szabad kategória
+            </h3>
+
+
+            <p>
+                Adja meg, milyen témához tartozik
+                a feladvány, majd írja be magát
+                a feladványt.
+            </p>
+
+
+            <label for="szabadKategoriaMezo">
+                Kategória megnevezése
+            </label>
+
+
+            <input
+                type="text"
+                id="szabadKategoriaMezo"
+                autocomplete="off"
+                maxlength="100"
+                disabled
+            >
+
+
+            <label for="szabadFeladvanyMezo">
+                Saját feladvány
+            </label>
+
+
+            <input
+                type="text"
+                id="szabadFeladvanyMezo"
+                autocomplete="off"
+                disabled
+            >
+
+
+            <p>
+                A feladvány hossza nincs korlátozva.
+                A szóköz és a vessző nem számít bele
+                a betűk számába.
+            </p>
+
+
+            <button
+                type="button"
+                id="szabadFeladvanyGomb"
+                disabled
+            >
+                Feladvány beküldése
+            </button>
+
+
+            <button
+                type="button"
+                id="szabadKategoriaVisszaGomb"
+                disabled
+            >
+                Vissza a kategóriákhoz
+            </button>
+
+
+            <p
+                id="szabadFeladvanyUzenet"
+                role="status"
+                aria-live="assertive"
+                aria-atomic="true"
+            ></p>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- AKTUÁLIS JÁTÉKOS -->
+        <!-- ===================================== -->
+
+        <p
+            id="soronLevoKijelzes"
+            role="status"
+            aria-live="assertive"
+            aria-atomic="true"
+        ></p>
+
+
+        <!-- ===================================== -->
+        <!-- JÁTÉKOSOK ÉS PONTOK -->
+        <!-- ===================================== -->
+
+        <h3>
+            Játékosok és pontok
+        </h3>
+
+
+        <ul
+            id="jatekPontLista"
+            aria-label="Játékosok és pontok"
+        ></ul>
+
+
+        <!-- ===================================== -->
+        <!-- TÁVOLLÉT ÉS ÚJ KÖR -->
+        <!-- ===================================== -->
+
+        <section
+            id="jatekosAllapotSzekcio"
+            aria-label="Játékos állapota és új kör"
+        >
+
+            <button
+                type="button"
+                id="tavolletGomb"
+            >
+                Távol vagyok / Kimaradok
+            </button>
+
+
+            <button
+                type="button"
+                id="visszateresGomb"
+                hidden
+            >
+                Újra játékban vagyok
+            </button>
+
+
+            <button
+                type="button"
+                id="ujKorGomb"
+                hidden
+            >
+                Új kör indítása
+            </button>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- KATEGÓRIA -->
+        <!-- ===================================== -->
+
+        <h3>
+            Kategória
+        </h3>
+
+
+        <p id="kategoriaKijelzes">
+            Még nincs kiválasztva kategória.
+        </p>
+
+
+        <p id="betuSzamKijelzes"></p>
+
+
+        <!-- ===================================== -->
+        <!-- FELADVÁNY -->
+        <!-- ===================================== -->
+
+        <h3>
+            Feladvány
+        </h3>
+
+
+        <p
+            id="akadalymentesFeladvanyInfo"
+            class="sr-only"
+            tabindex="-1"
+            aria-live="polite"
+            aria-atomic="true"
+        ></p>
+
+
+        <div
+            id="feladvanyKijelzes"
+            aria-label="Feladvány"
+            aria-live="polite"
+        ></div>
+
+
+        <!-- ===================================== -->
+        <!-- SZERENCSEKERÉK -->
+        <!-- ===================================== -->
+
+        <section
+            id="kerekSzekcio"
+            aria-labelledby="kerekCim"
+        >
+
+            <h3 id="kerekCim">
+                Szerencsekerék
+            </h3>
+
+
+            <div
+                id="kerekDoboz"
+                aria-hidden="true"
+            >
+
+                <div id="kerekMutato"></div>
+
+
+                <div id="kerekGrafika">
+
+                    <div id="kerekFeliratok"></div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="porgetesGomb"
+                disabled
+                aria-keyshortcuts="P"
+            >
+                Pörgetés (P)
+            </button>
+
+
+            <p
+                id="kerekEredmeny"
+                role="status"
+                aria-live="assertive"
+                aria-atomic="true"
+            >
+                A kerék még nem lett megpörgetve.
+            </p>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- BETŰ VÁLASZTÁSA -->
+        <!-- ===================================== -->
+
+        <section id="betuSzekcio">
+
+            <h3>
+                Betű választása
+            </h3>
+
+
+            <label for="betuMezo">
+                Betű
+            </label>
+
+
+            <input
+                type="text"
+                id="betuMezo"
+                maxlength="1"
+                autocomplete="off"
+                disabled
+            >
+
+
+            <button
+                type="button"
+                id="betuGomb"
+                disabled
+            >
+                Betű beküldése
+            </button>
+
+
+            <p
+                id="betuUzenet"
+                role="status"
+                aria-live="assertive"
+                aria-atomic="true"
+            ></p>
+
+
+            <p
+                id="hasznaltBetuk"
+                aria-live="polite"
+            >
+                Választott betűk: még nincs.
+            </p>
+
+
+            <p
+                id="hibasBetuk"
+                aria-live="polite"
+            >
+                Hibás betűk: még nincs.
+            </p>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- TELJES MEGFEJTÉS -->
+        <!-- ===================================== -->
+
+        <section id="megfejtesSzekcio">
+
+            <h3>
+                Teljes megfejtés
+            </h3>
+
+
+            <label for="megfejtesMezo">
+                Megfejtés
+            </label>
+
+
+            <input
+                type="text"
+                id="megfejtesMezo"
+                autocomplete="off"
+                disabled
+            >
+
+
+            <button
+                type="button"
+                id="megfejtesGomb"
+                disabled
+            >
+                Megfejtés beküldése
+            </button>
+
+
+            <p
+                id="megfejtesUzenet"
+                role="status"
+                aria-live="assertive"
+                aria-atomic="true"
+            ></p>
+
+
+            <p
+                id="hibasMegfejtesek"
+                aria-live="polite"
+            >
+                Hibás megfejtések: még nincs.
+            </p>
+
+        </section>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- KÉSZÍTŐK -->
+    <!-- ========================================= -->
+
+    <div class="keszitok">
+
+        <p>
+            Készítő: Alien
+        </p>
+
+        <p>
+           
+        
+
+        <p>
+            Verzió: 1.0.0
+        </p>
+
+    </div>
+
+
+</main>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/client.js"></script>
+
+
+</body>
+
+</html>
