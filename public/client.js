@@ -1,213 +1,841 @@
 console.log("client.js betöltve");
 
 // ==================================================
-// SZERENCSEKERÉK 1.0 - CLIENT.JS
+// SZERENCSEKERÉK 1.1 - CLIENT.JS
 // ==================================================
 
-const uzenet = document.getElementById("uzenet");
-const jatekosNev = document.getElementById("jatekosNev");
-const szobaNev = document.getElementById("szobaNev");
-const mindenkiSzobaGomb = document.getElementById("mindenkiSzobaGomb");
-const csatlakozasGomb = document.getElementById("csatlakozasGomb");
-const belepes = document.getElementById("belepes");
+const $ = (id) => document.getElementById(id);
 
-const jatekTer = document.getElementById("jatekTer");
-const jatekCim = document.getElementById("jatekCim");
-const jatekInfo = document.getElementById("jatekInfo");
-const szobaCim = document.getElementById("szobaCim");
-const szobaKijelzes = document.getElementById("szobaKijelzes");
-const jatekosLetszam = document.getElementById("jatekosLetszam");
-const jatekosLista = document.getElementById("jatekosLista");
-const jatekInditasGomb = document.getElementById("jatekInditasGomb");
-const szobaUzenet = document.getElementById("szobaUzenet");
+const uzenet = $("uzenet");
+const jatekosNev = $("jatekosNev");
+const szobaNev = $("szobaNev");
+const mindenkiSzobaGomb = $("mindenkiSzobaGomb");
+const csatlakozasGomb = $("csatlakozasGomb");
+const belepes = $("belepes");
+const jatekTer = $("jatekTer");
+const jatekCim = $("jatekCim");
+const jatekInfo = $("jatekInfo");
+const szobaCim = $("szobaCim");
+const szobaKijelzes = $("szobaKijelzes");
+const jatekosLetszam = $("jatekosLetszam");
+const jatekosLista = $("jatekosLista");
+const jatekInditasGomb = $("jatekInditasGomb");
+const szobaUzenet = $("szobaUzenet");
+const zeneGomb = $("zeneGomb");
 
-const zeneGomb = document.getElementById("zeneGomb");
-
-const chatPanel = document.getElementById("chatPanel");
-const chatLista = document.getElementById("chatLista");
-const chatMezo = document.getElementById("chatMezo");
-const chatKuldesGomb = document.getElementById("chatKuldesGomb");
-const chatUzenet = document.getElementById("chatUzenet");
+const chatPanel = $("chatPanel");
+const chatLista = $("chatLista");
+const chatMezo = $("chatMezo");
+const chatKuldesGomb = $("chatKuldesGomb");
+const chatUzenet = $("chatUzenet");
 
 const kategoriavalasztasPanel =
-    document.getElementById("kategoriavalasztasPanel");
+    $("kategoriavalasztasPanel");
 
 const kategoriavalasztasCim =
-    document.getElementById("kategoriavalasztasCim");
+    $("kategoriavalasztasCim");
 
 const kategoriavalasztasInfo =
-    document.getElementById("kategoriavalasztasInfo");
+    $("kategoriavalasztasInfo");
 
 const kategoriaValaszto =
-    document.getElementById("kategoriaValaszto");
+    $("kategoriaValaszto");
 
 const kategoriaValasztasGomb =
-    document.getElementById("kategoriaValasztasGomb");
+    $("kategoriaValasztasGomb");
 
 const kategoriaUzenet =
-    document.getElementById("kategoriaUzenet");
+    $("kategoriaUzenet");
 
 const kategoriaMegerositesPanel =
-    document.getElementById("kategoriaMegerositesPanel");
+    $("kategoriaMegerositesPanel");
 
 const kategoriaMegerositesCim =
-    document.getElementById("kategoriaMegerositesCim");
+    $("kategoriaMegerositesCim");
 
 const kategoriaMegerositesSzoveg =
-    document.getElementById("kategoriaMegerositesSzoveg");
+    $("kategoriaMegerositesSzoveg");
 
 const kategoriaVeglegesitesGomb =
-    document.getElementById("kategoriaVeglegesitesGomb");
+    $("kategoriaVeglegesitesGomb");
 
 const kategoriaMasikGomb =
-    document.getElementById("kategoriaMasikGomb");
+    $("kategoriaMasikGomb");
 
 const kategoriaMegerositesUzenet =
-    document.getElementById("kategoriaMegerositesUzenet");
+    $("kategoriaMegerositesUzenet");
 
 const szabadFeladvanyPanel =
-    document.getElementById("szabadFeladvanyPanel");
-
-const szabadFeladvanyCim =
-    document.getElementById("szabadFeladvanyCim");
+    $("szabadFeladvanyPanel");
 
 const szabadKategoriaMezo =
-    document.getElementById("szabadKategoriaMezo");
+    $("szabadKategoriaMezo");
 
 const szabadFeladvanyMezo =
-    document.getElementById("szabadFeladvanyMezo");
+    $("szabadFeladvanyMezo");
 
 const szabadFeladvanyGomb =
-    document.getElementById("szabadFeladvanyGomb");
+    $("szabadFeladvanyGomb");
 
 const szabadKategoriaVisszaGomb =
-    document.getElementById("szabadKategoriaVisszaGomb");
+    $("szabadKategoriaVisszaGomb");
 
 const szabadFeladvanyUzenet =
-    document.getElementById("szabadFeladvanyUzenet");
+    $("szabadFeladvanyUzenet");
 
 const soronLevoKijelzes =
-    document.getElementById("soronLevoKijelzes");
+    $("soronLevoKijelzes");
 
 const jatekPontLista =
-    document.getElementById("jatekPontLista");
+    $("jatekPontLista");
 
 const tavolletGomb =
-    document.getElementById("tavolletGomb");
+    $("tavolletGomb");
 
 const visszateresGomb =
-    document.getElementById("visszateresGomb");
+    $("visszateresGomb");
 
 const ujKorGomb =
-    document.getElementById("ujKorGomb");
+    $("ujKorGomb");
 
 const kategoriaKijelzes =
-    document.getElementById("kategoriaKijelzes");
+    $("kategoriaKijelzes");
 
 const betuSzamKijelzes =
-    document.getElementById("betuSzamKijelzes");
+    $("betuSzamKijelzes");
 
 const feladvanyKijelzes =
-    document.getElementById("feladvanyKijelzes");
-
-const akadalymentesFeladvanyInfo =
-    document.getElementById("akadalymentesFeladvanyInfo");
+    $("feladvanyKijelzes");
 
 const kerekGrafika =
-    document.getElementById("kerekGrafika");
+    $("kerekGrafika");
 
 const kerekFeliratok =
-    document.getElementById("kerekFeliratok");
+    $("kerekFeliratok");
 
 const porgetesGomb =
-    document.getElementById("porgetesGomb");
+    $("porgetesGomb");
 
 const kerekEredmeny =
-    document.getElementById("kerekEredmeny");
+    $("kerekEredmeny");
 
 const betuMezo =
-    document.getElementById("betuMezo");
+    $("betuMezo");
 
 const betuGomb =
-    document.getElementById("betuGomb");
+    $("betuGomb");
 
 const betuUzenet =
-    document.getElementById("betuUzenet");
+    $("betuUzenet");
 
 const hasznaltBetuk =
-    document.getElementById("hasznaltBetuk");
+    $("hasznaltBetuk");
 
 const hibasBetuk =
-    document.getElementById("hibasBetuk");
+    $("hibasBetuk");
 
 const megfejtesMezo =
-    document.getElementById("megfejtesMezo");
+    $("megfejtesMezo");
 
 const megfejtesGomb =
-    document.getElementById("megfejtesGomb");
+    $("megfejtesGomb");
 
 const megfejtesUzenet =
-    document.getElementById("megfejtesUzenet");
+    $("megfejtesUzenet");
 
 const hibasMegfejtesek =
-    document.getElementById("hibasMegfejtesek");
+    $("hibasMegfejtesek");
+
+// ==================================================
+// KERÉK ÉS SZABÁLYOK
+// ==================================================
+
+const KEREK_MEZOK = [
+    1000,
+    1500,
+    2000,
+    2500,
+    3000,
+    3500,
+    4000,
+    5000,
+    6000,
+    7500,
+    10000,
+    20000,
+    "CSŐD",
+    "KIMARADSZ"
+];
+
+const MAGANHANGZO_AR =
+    1000;
+
+const MAGANHANGZOK =
+    new Set([
+        "A",
+        "Á",
+        "E",
+        "É",
+        "I",
+        "Í",
+        "O",
+        "Ó",
+        "Ö",
+        "Ő",
+        "U",
+        "Ú",
+        "Ü",
+        "Ű"
+    ]);
 
 // ==================================================
 // ÁLLAPOT
 // ==================================================
 
-const KEREK_MEZOK = [
-    100,
-    200,
-    300,
-    400,
-    500,
-    600,
-    700,
-    800,
-    900,
-    1000,
-    "CSŐD",
-    "KIMARADSZ"
-];
+let socket =
+    null;
 
-let socket = null;
+let sajatJatekosId =
+    null;
 
-let sajatJatekosId = null;
-let sajatJatekosNev = "";
+let sajatJatekosNev =
+    "";
 
-let aktualisJatekosId = null;
-let aktualisJatekosNev = "";
+let aktualisJatekosId =
+    null;
 
-let kategoriatValasztoId = null;
+let aktualisJatekosNev =
+    "";
 
-let kategoriaraVar = false;
-let kategoriaMegerositesreVar = false;
-let kategoriaJelolt = "";
+let kategoriatValasztoId =
+    null;
 
-let szabadFeladvanyraVar = false;
+let kategoriaraVar =
+    false;
 
-let korLezart = false;
+let kategoriaMegerositesreVar =
+    false;
 
-let aktualisKerekErtek = null;
-let varBeture = false;
-let porgetesFolyamatban = false;
+let kategoriaJelolt =
+    "";
 
-let kerekForgas = 0;
+let szabadFeladvanyraVar =
+    false;
 
-let sajatTavol = false;
-let sajatVisszaterKovetkezoKorban = false;
+let korLezart =
+    false;
 
-let jatekMarElindult = false;
+let aktualisKerekErtek =
+    null;
+
+let varBeture =
+    false;
+
+let maganhangzoVasarlasMod =
+    false;
+
+let porgetesFolyamatban =
+    false;
+
+let kerekForgas =
+    0;
+
+let sajatTavol =
+    false;
+
+let sajatVisszaterKovetkezoKorban =
+    false;
+
+let jatekMarElindult =
+    false;
+
+let utolsoJatekosLista =
+    [];
+
+let utolsoHibasBetuk =
+    [];
+
+let gyorsBemondo =
+    null;
+
+let sugoGomb =
+    null;
+
+let sugoAblak =
+    null;
+
+let sugoCim =
+    null;
 
 // ==================================================
-// SEGÉDFÜGGVÉNY
+// SEGÉDFÜGGVÉNYEK
 // ==================================================
 
-function vanValodiSzamosKerekErtek() {
+function magyarPontszam(
+    ertek
+) {
+    return Number(
+        ertek || 0
+    ).toLocaleString(
+        "hu-HU"
+    );
+}
+
+function maganhangzoE(
+    betu
+) {
+    return MAGANHANGZOK.has(
+        String(
+            betu || ""
+        )
+            .trim()
+            .toLocaleUpperCase(
+                "hu-HU"
+            )
+    );
+}
+
+function vanSzamosKerekErtek() {
     return (
-        typeof aktualisKerekErtek === "number" &&
-        Number.isFinite(aktualisKerekErtek)
+        typeof aktualisKerekErtek ===
+            "number" &&
+        Number.isFinite(
+            aktualisKerekErtek
+        )
+    );
+}
+
+// ==================================================
+// KÉPERNYŐOLVASÓ BEMONDÁS
+// ==================================================
+
+function bemondas(
+    szoveg
+) {
+    if (
+        !gyorsBemondo
+    ) {
+        gyorsBemondo =
+            document.createElement(
+                "div"
+            );
+
+        gyorsBemondo.setAttribute(
+            "role",
+            "status"
+        );
+
+        gyorsBemondo.setAttribute(
+            "aria-live",
+            "assertive"
+        );
+
+        gyorsBemondo.setAttribute(
+            "aria-atomic",
+            "true"
+        );
+
+        gyorsBemondo.style.position =
+            "absolute";
+
+        gyorsBemondo.style.width =
+            "1px";
+
+        gyorsBemondo.style.height =
+            "1px";
+
+        gyorsBemondo.style.padding =
+            "0";
+
+        gyorsBemondo.style.margin =
+            "-1px";
+
+        gyorsBemondo.style.overflow =
+            "hidden";
+
+        gyorsBemondo.style.clip =
+            "rect(0, 0, 0, 0)";
+
+        gyorsBemondo.style.whiteSpace =
+            "nowrap";
+
+        gyorsBemondo.style.border =
+            "0";
+
+        document.body.appendChild(
+            gyorsBemondo
+        );
+    }
+
+    gyorsBemondo.textContent =
+        "";
+
+    window.setTimeout(
+        function () {
+            gyorsBemondo.textContent =
+                String(
+                    szoveg || ""
+                );
+        },
+        25
+    );
+}
+
+// ==================================================
+// HIBÁS BETŰK FELOLVASÁSA
+// ==================================================
+
+function hibasBetukFelolvasasa() {
+    if (
+        utolsoHibasBetuk.length
+    ) {
+        bemondas(
+            "Hibás betűk: " +
+            utolsoHibasBetuk.join(
+                ", "
+            ) +
+            "."
+        );
+    } else {
+        bemondas(
+            "Még nincs hibás betű."
+        );
+    }
+}
+
+// ==================================================
+// PONTSZÁMOK FELOLVASÁSA
+// ==================================================
+
+function pontszamokFelolvasasa() {
+    if (
+        !utolsoJatekosLista.length
+    ) {
+        bemondas(
+            "Még nincs elérhető pontszám."
+        );
+
+        return;
+    }
+
+    const szoveg =
+        utolsoJatekosLista
+            .map(
+                function (
+                    jatekos
+                ) {
+                    return (
+                        jatekos.nev +
+                        ": " +
+                        magyarPontszam(
+                            jatekos.pont
+                        ) +
+                        " pont"
+                    );
+                }
+            )
+            .join(
+                ". "
+            );
+
+    bemondas(
+        "Pontszámok. " +
+        szoveg +
+        "."
+    );
+}
+
+// ==================================================
+// JÁTÉKSÚGÓ
+// ==================================================
+
+function sugoBezasa() {
+    if (
+        !sugoAblak ||
+        sugoAblak.hidden
+    ) {
+        return;
+    }
+
+    sugoAblak.hidden =
+        true;
+
+    if (
+        sugoGomb
+    ) {
+        sugoGomb.focus();
+    }
+}
+
+function sugoMegnyitasa() {
+    if (
+        !sugoAblak
+    ) {
+        return;
+    }
+
+    sugoAblak.hidden =
+        false;
+
+    window.setTimeout(
+        function () {
+            if (
+                sugoCim
+            ) {
+                sugoCim.focus();
+            }
+        },
+        30
+    );
+}
+
+function sugoLetrehozasa() {
+    if (
+        !jatekTer ||
+        $("jatekSugoGomb")
+    ) {
+        return;
+    }
+
+    sugoGomb =
+        document.createElement(
+            "button"
+        );
+
+    sugoGomb.type =
+        "button";
+
+    sugoGomb.id =
+        "jatekSugoGomb";
+
+    sugoGomb.textContent =
+        "Játéksúgó és billentyűparancsok (Alt+I)";
+
+    sugoGomb.setAttribute(
+        "aria-keyshortcuts",
+        "Alt+I"
+    );
+
+    sugoAblak =
+        document.createElement(
+            "section"
+        );
+
+    sugoAblak.id =
+        "jatekSugoAblak";
+
+    sugoAblak.hidden =
+        true;
+
+    sugoAblak.setAttribute(
+        "role",
+        "dialog"
+    );
+
+    sugoAblak.setAttribute(
+        "aria-labelledby",
+        "jatekSugoCim"
+    );
+
+    sugoCim =
+        document.createElement(
+            "h3"
+        );
+
+    sugoCim.id =
+        "jatekSugoCim";
+
+    sugoCim.tabIndex =
+        -1;
+
+    sugoCim.textContent =
+        "Szerencsekerék játéksúgó";
+
+    const bevezeto =
+        document.createElement(
+            "p"
+        );
+
+    bevezeto.textContent =
+        "A játék billentyűzettel és képernyőolvasóval is használható. " +
+        "A gyorsbillentyűk Alt billentyűvel működnek, ezért JAWS használatakor " +
+        "nem kell állandóan Insert+Z billentyűkombinációval módot váltani.";
+
+    const menetCim =
+        document.createElement(
+            "h4"
+        );
+
+    menetCim.textContent =
+        "A játék menete";
+
+    const menetLista =
+        document.createElement(
+            "ol"
+        );
+
+    [
+        "Csatlakozás után a szobagazda indítja el a játékot.",
+        "A kijelölt játékos kategóriát választ, majd elindul a feladvány.",
+        "Ha Ön van soron, pörgesse meg a kereket.",
+        "Mássalhangzó találat esetén a kipörgetett pontérték minden előfordulás után jár.",
+        "Magánhangzót pörgetés nélkül lehet vásárolni. Egy magánhangzó ára 1000 pont.",
+        "CSŐD esetén az adott játékos teljes addigi pontszáma nullára változik.",
+        "KIMARADSZ esetén a következő aktív játékos kerül sorra.",
+        "A teljes megfejtést a megfejtés mezőbe lehet beírni és elküldeni."
+    ].forEach(
+        function (
+            szoveg
+        ) {
+            const li =
+                document.createElement(
+                    "li"
+                );
+
+            li.textContent =
+                szoveg;
+
+            menetLista.appendChild(
+                li
+            );
+        }
+    );
+
+    const billentyuCim =
+        document.createElement(
+            "h4"
+        );
+
+    billentyuCim.textContent =
+        "Gyorsbillentyűk";
+
+    const billentyuLista =
+        document.createElement(
+            "ul"
+        );
+
+    [
+        "Alt+P: a kerék megpörgetése.",
+        "Alt+H: a hibás betűk felolvasása.",
+        "Alt+M: magánhangzó vásárlása 1000 pontért.",
+        "Alt+S: az összes játékos aktuális pontszámának felolvasása.",
+        "Alt+I: a játéksúgó megnyitása.",
+        "Escape: a játéksúgó bezárása."
+    ].forEach(
+        function (
+            szoveg
+        ) {
+            const li =
+                document.createElement(
+                    "li"
+                );
+
+            li.textContent =
+                szoveg;
+
+            billentyuLista.appendChild(
+                li
+            );
+        }
+    );
+
+    const megjegyzes =
+        document.createElement(
+            "p"
+        );
+
+    megjegyzes.textContent =
+        "A helyesen választott betűket nem listázzuk külön, " +
+        "mert azok azonnal megjelennek a feladványban. " +
+        "Külön csak a hibás betűket tartjuk nyilván.";
+
+    const bezarGomb =
+        document.createElement(
+            "button"
+        );
+
+    bezarGomb.type =
+        "button";
+
+    bezarGomb.textContent =
+        "Súgó bezárása (Escape)";
+
+    sugoAblak.appendChild(
+        sugoCim
+    );
+
+    sugoAblak.appendChild(
+        bevezeto
+    );
+
+    sugoAblak.appendChild(
+        menetCim
+    );
+
+    sugoAblak.appendChild(
+        menetLista
+    );
+
+    sugoAblak.appendChild(
+        billentyuCim
+    );
+
+    sugoAblak.appendChild(
+        billentyuLista
+    );
+
+    sugoAblak.appendChild(
+        megjegyzes
+    );
+
+    sugoAblak.appendChild(
+        bezarGomb
+    );
+
+    if (
+        jatekCim &&
+        jatekCim.parentNode ===
+            jatekTer
+    ) {
+        jatekCim.insertAdjacentElement(
+            "afterend",
+            sugoGomb
+        );
+
+        sugoGomb.insertAdjacentElement(
+            "afterend",
+            sugoAblak
+        );
+    } else {
+        jatekTer.insertBefore(
+            sugoGomb,
+            jatekTer.firstChild
+        );
+
+        sugoGomb.insertAdjacentElement(
+            "afterend",
+            sugoAblak
+        );
+    }
+
+    sugoGomb.addEventListener(
+        "click",
+        sugoMegnyitasa
+    );
+
+    bezarGomb.addEventListener(
+        "click",
+        sugoBezasa
+    );
+}
+
+// ==================================================
+// MAGÁNHANGZÓ VÁSÁRLÁS
+// ==================================================
+
+function maganhangzoVasarlasInditas() {
+    const enVagyokSoron =
+        aktualisJatekosId ===
+            sajatJatekosId &&
+        !sajatTavol &&
+        !korLezart &&
+        !kategoriaraVar &&
+        !kategoriaMegerositesreVar &&
+        !szabadFeladvanyraVar;
+
+    if (
+        !enVagyokSoron
+    ) {
+        bemondas(
+            "Most nem Ön van soron."
+        );
+
+        return;
+    }
+
+    maganhangzoVasarlasMod =
+        true;
+
+    varBeture =
+        false;
+
+    kezelofeluletFrissites();
+
+    if (
+        betuUzenet
+    ) {
+        betuUzenet.textContent =
+            "Magánhangzó vásárlása. Írjon be egy magánhangzót. Ár: 1000 pont.";
+    }
+
+    bemondas(
+        "Magánhangzó vásárlása. " +
+        "Egy magánhangzó ára 1000 pont. " +
+        "Írja be a magánhangzót, majd nyomjon Entert."
+    );
+
+    if (
+        betuMezo
+    ) {
+        betuMezo.focus();
+    }
+}
+
+function maganhangzoGombLetrehozasa() {
+    if (
+        !betuGomb ||
+        $("maganhangzoGomb")
+    ) {
+        return;
+    }
+
+    const gomb =
+        document.createElement(
+            "button"
+        );
+
+    gomb.type =
+        "button";
+
+    gomb.id =
+        "maganhangzoGomb";
+
+    gomb.textContent =
+        "Magánhangzó vásárlása - 1000 pont (Alt+M)";
+
+    gomb.setAttribute(
+        "aria-keyshortcuts",
+        "Alt+M"
+    );
+
+    gomb.addEventListener(
+        "click",
+        function () {
+            klikkHang();
+
+            maganhangzoVasarlasInditas();
+        }
+    );
+
+    betuGomb.insertAdjacentElement(
+        "afterend",
+        gomb
+    );
+}
+
+sugoLetrehozasa();
+
+maganhangzoGombLetrehozasa();
+
+if (
+    hasznaltBetuk
+) {
+    hasznaltBetuk.hidden =
+        true;
+
+    hasznaltBetuk.setAttribute(
+        "aria-hidden",
+        "true"
     );
 }
 
@@ -215,46 +843,32 @@ function vanValodiSzamosKerekErtek() {
 // HANGRENDSZER
 // ==================================================
 
-let audioContext = null;
+let audioContext =
+    null;
 
-function audioContextInditas() {
-    if (!audioContext) {
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        if (AudioContext) {
-            audioContext =
-                new AudioContext();
-        }
-    }
-
-    if (
-        audioContext &&
-        audioContext.state === "suspended"
-    ) {
-        audioContext.resume();
-    }
-}
+let varakozoZeneSzol =
+    false;
 
 const klikkHangFajl =
-    new Audio("/click.wav");
-
-klikkHangFajl.preload =
-    "auto";
+    new Audio(
+        "/click.wav"
+    );
 
 const tapsHangFajl =
     new Audio(
         "/mixkit-clapping-indoors-3039.wav"
     );
 
-tapsHangFajl.preload =
-    "auto";
-
 const varakozoZene =
     new Audio(
         "/Szerencsekerek.m4a"
     );
+
+klikkHangFajl.preload =
+    "auto";
+
+tapsHangFajl.preload =
+    "auto";
 
 varakozoZene.preload =
     "auto";
@@ -265,12 +879,30 @@ varakozoZene.loop =
 varakozoZene.volume =
     0.85;
 
-let varakozoZeneSzol =
-    false;
+function audioContextInditas() {
+    if (
+        !audioContext
+    ) {
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
 
-// ==================================================
-// HANGOK
-// ==================================================
+        if (
+            AudioContext
+        ) {
+            audioContext =
+                new AudioContext();
+        }
+    }
+
+    if (
+        audioContext &&
+        audioContext.state ===
+            "suspended"
+    ) {
+        audioContext.resume();
+    }
+}
 
 function klikkHang() {
     try {
@@ -279,8 +911,12 @@ function klikkHang() {
 
         klikkHangFajl
             .play()
-            .catch(function () {});
-    } catch (hiba) {
+            .catch(
+                function () {}
+            );
+    } catch (
+        hiba
+    ) {
         console.log(
             "Klikk hang hiba:",
             hiba
@@ -291,22 +927,28 @@ function klikkHang() {
 function tapsHang() {
     try {
         tapsHangFajl.pause();
+
         tapsHangFajl.currentTime =
             0;
 
         tapsHangFajl
             .play()
-            .catch(function () {});
+            .catch(
+                function () {}
+            );
 
         window.setTimeout(
             function () {
                 tapsHangFajl.pause();
+
                 tapsHangFajl.currentTime =
                     0;
             },
             3500
         );
-    } catch (hiba) {
+    } catch (
+        hiba
+    ) {
         console.log(
             "Taps hang hiba:",
             hiba
@@ -322,7 +964,9 @@ function hangLejatszas(
 ) {
     audioContextInditas();
 
-    if (!audioContext) {
+    if (
+        !audioContext
+    ) {
         return;
     }
 
@@ -336,7 +980,8 @@ function hangLejatszas(
         audioContext.currentTime;
 
     oscillator.type =
-        tipus || "sine";
+        tipus ||
+        "sine";
 
     oscillator.frequency.value =
         frekvencia;
@@ -347,7 +992,8 @@ function hangLejatszas(
     );
 
     gain.gain.exponentialRampToValueAtTime(
-        hangero || 0.08,
+        hangero ||
+        0.08,
         most + 0.01
     );
 
@@ -446,7 +1092,9 @@ function hibasBetuHang() {
 function csodHang() {
     audioContextInditas();
 
-    if (!audioContext) {
+    if (
+        !audioContext
+    ) {
         return;
     }
 
@@ -544,7 +1192,9 @@ function gyozelmiHang() {
 // ==================================================
 
 function zeneGombFrissites() {
-    if (!zeneGomb) {
+    if (
+        !zeneGomb
+    ) {
         return;
     }
 
@@ -598,53 +1248,31 @@ function varakozoZeneInditas() {
 
     try {
         varakozoZene.pause();
+
         varakozoZene.currentTime =
             0;
 
-        const lejatszas =
-            varakozoZene.play();
+        varakozoZene
+            .play()
+            .then(
+                function () {
+                    varakozoZeneSzol =
+                        true;
 
-        if (
-            lejatszas &&
-            typeof lejatszas.then ===
-            "function"
-        ) {
-            lejatszas
-                .then(
-                    function () {
-                        varakozoZeneSzol =
-                            true;
+                    zeneGombFrissites();
+                }
+            )
+            .catch(
+                function () {
+                    varakozoZeneSzol =
+                        false;
 
-                        zeneGombFrissites();
-                    }
-                )
-                .catch(
-                    function (
-                        hiba
-                    ) {
-                        console.log(
-                            "A várakozó zene nem indult el:",
-                            hiba
-                        );
-
-                        varakozoZeneSzol =
-                            false;
-
-                        zeneGombFrissites();
-                    }
-                );
-        } else {
-            varakozoZeneSzol =
-                true;
-
-            zeneGombFrissites();
-        }
-    } catch (hiba) {
-        console.log(
-            "Várakozó zene hiba:",
-            hiba
-        );
-
+                    zeneGombFrissites();
+                }
+            );
+    } catch (
+        hiba
+    ) {
         varakozoZeneSzol =
             false;
 
@@ -655,14 +1283,12 @@ function varakozoZeneInditas() {
 function varakozoZeneLeallitas() {
     try {
         varakozoZene.pause();
+
         varakozoZene.currentTime =
             0;
-    } catch (hiba) {
-        console.log(
-            "Várakozó zene leállítási hiba:",
-            hiba
-        );
-    }
+    } catch (
+        hiba
+    ) {}
 
     varakozoZeneSzol =
         false;
@@ -733,14 +1359,22 @@ function kerekFeliratokLetrehozasa() {
             felirat.className =
                 "kerekFelirat";
 
-            felirat.textContent =
+            if (
                 ertek ===
                 "KIMARADSZ"
-                    ? "Kimaradsz"
-                    : ertek ===
-                      "CSŐD"
-                        ? "Csőd"
-                        : ertek;
+            ) {
+                felirat.textContent =
+                    "Kimaradsz";
+            } else if (
+                ertek ===
+                "CSŐD"
+            ) {
+                felirat.textContent =
+                    "Csőd";
+            } else {
+                felirat.textContent =
+                    ertek;
+            }
 
             const kozepSzog =
                 index *
@@ -982,7 +1616,10 @@ function pontListaFrissites(
     jatekosok
 ) {
     if (
-        !jatekPontLista
+        !jatekPontLista ||
+        !Array.isArray(
+            jatekosok
+        )
     ) {
         return;
     }
@@ -990,13 +1627,26 @@ function pontListaFrissites(
     jatekPontLista.innerHTML =
         "";
 
-    if (
-        !Array.isArray(
-            jatekosok
-        )
-    ) {
-        return;
-    }
+    utolsoJatekosLista =
+        jatekosok.map(
+            function (
+                jatekos
+            ) {
+                return {
+                    id:
+                        jatekos.id,
+
+                    nev:
+                        jatekos.nev,
+
+                    pont:
+                        Number(
+                            jatekos.pont ||
+                            0
+                        )
+                };
+            }
+        );
 
     jatekosok.forEach(
         function (
@@ -1010,8 +1660,10 @@ function pontListaFrissites(
             li.textContent =
                 jatekos.nev +
                 ": " +
-                jatekos.pont +
-                " pont";
+                magyarPontszam(
+                    jatekos.pont
+                ) +
+                " pont összesen";
 
             if (
                 jatekos.id ===
@@ -1180,9 +1832,6 @@ function kezelofeluletFrissites() {
         !kategoriaMegerositesreVar &&
         !szabadFeladvanyraVar;
 
-    const vanSzamosKerekErtek =
-        vanValodiSzamosKerekErtek();
-
     if (
         soronLevoKijelzes
     ) {
@@ -1196,7 +1845,7 @@ function kezelofeluletFrissites() {
         ) {
             soronLevoKijelzes.textContent =
                 kategoriatValasztoId ===
-                sajatJatekosId
+                    sajatJatekosId
                     ? "Ön írja be a kategória nevét és a saját feladványt."
                     : "A saját feladvány megadására várunk.";
         } else if (
@@ -1204,7 +1853,7 @@ function kezelofeluletFrissites() {
         ) {
             soronLevoKijelzes.textContent =
                 kategoriatValasztoId ===
-                sajatJatekosId
+                    sajatJatekosId
                     ? "Ön erősíti meg a kiválasztott kategóriát."
                     : "A kategória megerősítésére várunk.";
         } else if (
@@ -1212,15 +1861,21 @@ function kezelofeluletFrissites() {
         ) {
             soronLevoKijelzes.textContent =
                 kategoriatValasztoId ===
-                sajatJatekosId
+                    sajatJatekosId
                     ? "Ön választja a következő kategóriát."
                     : "Kategóriaválasztás következik.";
+        } else if (
+            enVagyokSoron &&
+            maganhangzoVasarlasMod
+        ) {
+            soronLevoKijelzes.textContent =
+                "Ön van soron. Magánhangzó vásárlása következik.";
         } else if (
             enVagyokSoron &&
             varBeture
         ) {
             soronLevoKijelzes.textContent =
-                "Ön van soron. Írjon egy betűt.";
+                "Ön van soron. Írjon egy mássalhangzót.";
         } else if (
             enVagyokSoron
         ) {
@@ -1246,7 +1901,8 @@ function kezelofeluletFrissites() {
             !enVagyokSoron ||
             porgetesFolyamatban ||
             varBeture ||
-            vanSzamosKerekErtek;
+            maganhangzoVasarlasMod ||
+            vanSzamosKerekErtek();
     }
 
     if (
@@ -1254,7 +1910,10 @@ function kezelofeluletFrissites() {
     ) {
         betuMezo.disabled =
             !enVagyokSoron ||
-            !varBeture;
+            (
+                !varBeture &&
+                !maganhangzoVasarlasMod
+            );
     }
 
     if (
@@ -1262,7 +1921,20 @@ function kezelofeluletFrissites() {
     ) {
         betuGomb.disabled =
             !enVagyokSoron ||
-            !varBeture;
+            (
+                !varBeture &&
+                !maganhangzoVasarlasMod
+            );
+    }
+
+    const maganhangzoGomb =
+        $("maganhangzoGomb");
+
+    if (
+        maganhangzoGomb
+    ) {
+        maganhangzoGomb.disabled =
+            !enVagyokSoron;
     }
 
     if (
@@ -1312,8 +1984,11 @@ function kezelofeluletFrissites() {
     }
 
     kategoriavalasztasFrissites();
+
     kategoriaMegerositesFrissites();
+
     szabadKategoriaFrissites();
+
     zeneGombFrissites();
 }
 
@@ -1412,6 +2087,7 @@ if (
         "click",
         function () {
             klikkHang();
+
             chatKuldes();
         }
     );
@@ -1430,6 +2106,7 @@ if (
                 "Enter"
             ) {
                 event.preventDefault();
+
                 chatKuldes();
             }
         }
@@ -1443,7 +2120,9 @@ if (
 try {
     socket =
         io();
-} catch (hiba) {
+} catch (
+    hiba
+) {
     if (
         uzenet
     ) {
@@ -1451,6 +2130,171 @@ try {
             "A Socket.IO nem indult el.";
     }
 }
+
+// ==================================================
+// BELÉPÉS
+// ==================================================
+
+function csatlakozas() {
+    if (
+        !socket
+    ) {
+        return;
+    }
+
+    audioContextInditas();
+
+    const nev =
+        jatekosNev
+            ? jatekosNev.value.trim()
+            : "";
+
+    const szoba =
+        szobaNev
+            ? szobaNev.value.trim()
+            : "";
+
+    if (
+        !nev
+    ) {
+        if (
+            uzenet
+        ) {
+            uzenet.textContent =
+                "Kérlek, add meg a játékos nevét.";
+        }
+
+        if (
+            jatekosNev
+        ) {
+            jatekosNev.focus();
+        }
+
+        return;
+    }
+
+    if (
+        !szoba
+    ) {
+        if (
+            uzenet
+        ) {
+            uzenet.textContent =
+                "Kérlek, add meg a szoba nevét.";
+        }
+
+        if (
+            szobaNev
+        ) {
+            szobaNev.focus();
+        }
+
+        return;
+    }
+
+    if (
+        csatlakozasGomb
+    ) {
+        csatlakozasGomb.disabled =
+            true;
+    }
+
+    socket.emit(
+        "csatlakozas",
+        {
+            nev:
+                nev,
+
+            szoba:
+                szoba
+        }
+    );
+}
+
+if (
+    mindenkiSzobaGomb
+) {
+    mindenkiSzobaGomb.addEventListener(
+        "click",
+        function () {
+            klikkHang();
+
+            if (
+                szobaNev
+            ) {
+                szobaNev.value =
+                    "Mindenki szobája";
+
+                szobaNev.focus();
+            }
+        }
+    );
+}
+
+if (
+    csatlakozasGomb
+) {
+    csatlakozasGomb.addEventListener(
+        "click",
+        function () {
+            klikkHang();
+
+            csatlakozas();
+        }
+    );
+}
+
+if (
+    jatekosNev
+) {
+    jatekosNev.addEventListener(
+        "keydown",
+        function (
+            event
+        ) {
+            if (
+                event.key ===
+                "Enter"
+            ) {
+                event.preventDefault();
+
+                klikkHang();
+
+                if (
+                    szobaNev
+                ) {
+                    szobaNev.focus();
+                }
+            }
+        }
+    );
+}
+
+if (
+    szobaNev
+) {
+    szobaNev.addEventListener(
+        "keydown",
+        function (
+            event
+        ) {
+            if (
+                event.key ===
+                "Enter"
+            ) {
+                event.preventDefault();
+
+                klikkHang();
+
+                csatlakozas();
+            }
+        }
+    );
+}
+
+// ==================================================
+// SOCKET ESEMÉNYEK
+// ==================================================
 
 if (
     socket
@@ -1543,172 +2387,7 @@ if (
             }
         }
     );
-}
 
-// ==================================================
-// BELÉPÉS
-// ==================================================
-
-function csatlakozas() {
-    if (
-        !socket
-    ) {
-        return;
-    }
-
-    audioContextInditas();
-
-    const nev =
-        jatekosNev
-            ? jatekosNev.value.trim()
-            : "";
-
-    const szoba =
-        szobaNev
-            ? szobaNev.value.trim()
-            : "";
-
-    if (
-        !nev
-    ) {
-        if (
-            uzenet
-        ) {
-            uzenet.textContent =
-                "Kérlek, add meg a játékos nevét.";
-        }
-
-        if (
-            jatekosNev
-        ) {
-            jatekosNev.focus();
-        }
-
-        return;
-    }
-
-    if (
-        !szoba
-    ) {
-        if (
-            uzenet
-        ) {
-            uzenet.textContent =
-                "Kérlek, add meg a szoba nevét.";
-        }
-
-        if (
-            szobaNev
-        ) {
-            szobaNev.focus();
-        }
-
-        return;
-    }
-
-    if (
-        csatlakozasGomb
-    ) {
-        csatlakozasGomb.disabled =
-            true;
-    }
-
-    socket.emit(
-        "csatlakozas",
-        {
-            nev: nev,
-            szoba: szoba
-        }
-    );
-}
-
-if (
-    mindenkiSzobaGomb
-) {
-    mindenkiSzobaGomb.addEventListener(
-        "click",
-        function () {
-            klikkHang();
-
-            if (
-                szobaNev
-            ) {
-                szobaNev.value =
-                    "Mindenki szobája";
-
-                szobaNev.focus();
-            }
-        }
-    );
-}
-
-if (
-    csatlakozasGomb
-) {
-    csatlakozasGomb.addEventListener(
-        "click",
-        function () {
-            klikkHang();
-            csatlakozas();
-        }
-    );
-}
-
-if (
-    jatekosNev
-) {
-    jatekosNev.addEventListener(
-        "keydown",
-        function (
-            event
-        ) {
-            if (
-                event.key ===
-                "Enter"
-            ) {
-                event.preventDefault();
-
-                klikkHang();
-
-                if (
-                    szobaNev
-                ) {
-                    szobaNev.focus();
-                }
-            }
-        }
-    );
-}
-
-if (
-    szobaNev
-) {
-    szobaNev.addEventListener(
-        "keydown",
-        function (
-            event
-        ) {
-            if (
-                event.key ===
-                "Enter"
-            ) {
-                event.preventDefault();
-
-                klikkHang();
-
-                csatlakozas();
-            }
-        }
-    );
-}
-
-// ==================================================
-// SIKERES BELÉPÉS
-// ==================================================
-
-if (
-    socket
-) {
     socket.on(
         "csatlakozasSikeres",
         function (
@@ -1785,47 +2464,25 @@ if (
         function (
             szoveg
         ) {
-            if (
-                uzenet
-            ) {
-                uzenet.textContent =
-                    szoveg;
-            }
-
-            if (
-                szobaUzenet
-            ) {
-                szobaUzenet.textContent =
-                    szoveg;
-            }
-
-            if (
-                kategoriaUzenet
-            ) {
-                kategoriaUzenet.textContent =
-                    szoveg;
-            }
-
-            if (
-                kategoriaMegerositesUzenet
-            ) {
-                kategoriaMegerositesUzenet.textContent =
-                    szoveg;
-            }
-
-            if (
-                szabadFeladvanyUzenet
-            ) {
-                szabadFeladvanyUzenet.textContent =
-                    szoveg;
-            }
-
-            if (
+            [
+                uzenet,
+                szobaUzenet,
+                kategoriaUzenet,
+                kategoriaMegerositesUzenet,
+                szabadFeladvanyUzenet,
                 megfejtesUzenet
-            ) {
-                megfejtesUzenet.textContent =
-                    szoveg;
-            }
+            ].forEach(
+                function (
+                    elem
+                ) {
+                    if (
+                        elem
+                    ) {
+                        elem.textContent =
+                            szoveg;
+                    }
+                }
+            );
 
             if (
                 csatlakozasGomb
@@ -1837,15 +2494,7 @@ if (
             kezelofeluletFrissites();
         }
     );
-}
 
-// ==================================================
-// JÁTÉKOSLISTA
-// ==================================================
-
-if (
-    socket
-) {
     socket.on(
         "jatekosLista",
         function (
@@ -1867,7 +2516,12 @@ if (
                             );
 
                         let szoveg =
-                            jatekos.nev;
+                            jatekos.nev +
+                            " - " +
+                            magyarPontszam(
+                                jatekos.pont
+                            ) +
+                            " pont";
 
                         if (
                             jatekos.host
@@ -1884,8 +2538,7 @@ if (
                         }
 
                         if (
-                            jatekos
-                                .visszaterKovetkezoKorban
+                            jatekos.visszaterKovetkezoKorban
                         ) {
                             szoveg +=
                                 " - a következő körben visszatér";
@@ -1909,8 +2562,7 @@ if (
 
                             sajatVisszaterKovetkezoKorban =
                                 Boolean(
-                                    jatekos
-                                        .visszaterKovetkezoKorban
+                                    jatekos.visszaterKovetkezoKorban
                                 );
                         }
                     }
@@ -1933,40 +2585,7 @@ if (
             kezelofeluletFrissites();
         }
     );
-}
 
-// ==================================================
-// JÁTÉK INDÍTÁSA
-// ==================================================
-
-if (
-    jatekInditasGomb
-) {
-    jatekInditasGomb.addEventListener(
-        "click",
-        function () {
-            audioContextInditas();
-            klikkHang();
-
-            varakozoZeneLeallitas();
-
-            jatekInditasGomb.disabled =
-                true;
-
-            if (
-                socket
-            ) {
-                socket.emit(
-                    "jatekInditas"
-                );
-            }
-        }
-    );
-}
-
-if (
-    socket
-) {
     socket.on(
         "jatekElindult",
         function () {
@@ -1998,6 +2617,17 @@ if (
 
             kezelofeluletFrissites();
 
+            window.setTimeout(
+                function () {
+                    bemondas(
+                        "A játék elindult. " +
+                        "A játéksúgó a játéktér elején Tabbal elérhető, " +
+                        "vagy megnyitható Alt plusz I billentyűkombinációval."
+                    );
+                },
+                250
+            );
+
             if (
                 jatekCim
             ) {
@@ -2005,15 +2635,7 @@ if (
             }
         }
     );
-}
 
-// ==================================================
-// KATEGÓRIA
-// ==================================================
-
-if (
-    socket
-) {
     socket.on(
         "kategoriavalasztas",
         function (
@@ -2041,6 +2663,9 @@ if (
                 null;
 
             varBeture =
+                false;
+
+            maganhangzoVasarlasMod =
                 false;
 
             if (
@@ -2099,49 +2724,7 @@ if (
             }
         }
     );
-}
 
-function kategoriaKuldes() {
-    if (
-        !socket ||
-        !kategoriaraVar ||
-        kategoriatValasztoId !==
-            sajatJatekosId ||
-        !kategoriaValaszto
-    ) {
-        return;
-    }
-
-    const kategoria =
-        kategoriaValaszto.value;
-
-    if (
-        !kategoria
-    ) {
-        return;
-    }
-
-    socket.emit(
-        "kategoriaValasztas",
-        kategoria
-    );
-}
-
-if (
-    kategoriaValasztasGomb
-) {
-    kategoriaValasztasGomb.addEventListener(
-        "click",
-        function () {
-            klikkHang();
-            kategoriaKuldes();
-        }
-    );
-}
-
-if (
-    socket
-) {
     socket.on(
         "kategoriaMegerosites",
         function (
@@ -2166,57 +2749,7 @@ if (
             }
         }
     );
-}
 
-if (
-    kategoriaVeglegesitesGomb
-) {
-    kategoriaVeglegesitesGomb.addEventListener(
-        "click",
-        function () {
-            if (
-                !socket
-            ) {
-                return;
-            }
-
-            klikkHang();
-
-            socket.emit(
-                "kategoriaVeglegesites"
-            );
-        }
-    );
-}
-
-if (
-    kategoriaMasikGomb
-) {
-    kategoriaMasikGomb.addEventListener(
-        "click",
-        function () {
-            if (
-                !socket
-            ) {
-                return;
-            }
-
-            klikkHang();
-
-            socket.emit(
-                "kategoriaMasikValasztas"
-            );
-        }
-    );
-}
-
-// ==================================================
-// SZABAD KATEGÓRIA
-// ==================================================
-
-if (
-    socket
-) {
     socket.on(
         "szabadFeladvanyKeres",
         function (
@@ -2250,7 +2783,556 @@ if (
             }
         }
     );
+
+    socket.on(
+        "ujKor",
+        function (
+            adat
+        ) {
+            kategoriaraVar =
+                false;
+
+            kategoriaMegerositesreVar =
+                false;
+
+            szabadFeladvanyraVar =
+                false;
+
+            korLezart =
+                false;
+
+            kategoriatValasztoId =
+                null;
+
+            aktualisKerekErtek =
+                null;
+
+            varBeture =
+                false;
+
+            maganhangzoVasarlasMod =
+                false;
+
+            porgetesFolyamatban =
+                false;
+
+            if (
+                kategoriaKijelzes
+            ) {
+                kategoriaKijelzes.textContent =
+                    adat.kategoria;
+            }
+
+            if (
+                kerekEredmeny
+            ) {
+                kerekEredmeny.textContent =
+                    "A kerék még nem lett megpörgetve.";
+            }
+
+            kezelofeluletFrissites();
+        }
+    );
+
+    socket.on(
+        "korVege",
+        function (
+            adat
+        ) {
+            korLezart =
+                true;
+
+            aktualisKerekErtek =
+                null;
+
+            varBeture =
+                false;
+
+            maganhangzoVasarlasMod =
+                false;
+
+            porgetesFolyamatban =
+                false;
+
+            if (
+                kerekEredmeny
+            ) {
+                kerekEredmeny.textContent =
+                    adat &&
+                    adat.uzenet
+                        ? adat.uzenet
+                        : "A kör véget ért.";
+            }
+
+            kezelofeluletFrissites();
+        }
+    );
+
+    socket.on(
+        "jatekAllapot",
+        function (
+            adat
+        ) {
+            aktualisJatekosId =
+                adat.soronLevoId;
+
+            aktualisJatekosNev =
+                adat.soronLevoNev;
+
+            kategoriatValasztoId =
+                adat.kategoriatValasztoId;
+
+            kategoriaraVar =
+                Boolean(
+                    adat.kategoriaraVar
+                );
+
+            kategoriaMegerositesreVar =
+                Boolean(
+                    adat.kategoriaMegerositesreVar
+                );
+
+            kategoriaJelolt =
+                adat.kategoriaJelolt ||
+                "";
+
+            korLezart =
+                Boolean(
+                    adat.korLezart
+                );
+
+            szabadFeladvanyraVar =
+                Boolean(
+                    adat.szabadFeladvanyraVar
+                );
+
+            aktualisKerekErtek =
+                adat.aktualisKerekErtek;
+
+            if (
+                aktualisJatekosId !==
+                sajatJatekosId
+            ) {
+                maganhangzoVasarlasMod =
+                    false;
+            }
+
+            const szamosKerekErtek =
+                vanSzamosKerekErtek();
+
+            if (
+                aktualisJatekosId ===
+                    sajatJatekosId &&
+                szamosKerekErtek &&
+                !kategoriaraVar &&
+                !kategoriaMegerositesreVar &&
+                !szabadFeladvanyraVar &&
+                !korLezart
+            ) {
+                varBeture =
+                    true;
+            } else if (
+                !szamosKerekErtek &&
+                !maganhangzoVasarlasMod
+            ) {
+                varBeture =
+                    false;
+            }
+
+            if (
+                adat.kategoria &&
+                kategoriaKijelzes
+            ) {
+                kategoriaKijelzes.textContent =
+                    adat.kategoria;
+            }
+
+            if (
+                feladvanyKijelzes
+            ) {
+                feladvanyKijelzes.textContent =
+                    adat.feladvany ||
+                    "";
+            }
+
+            if (
+                betuSzamKijelzes
+            ) {
+                betuSzamKijelzes.textContent =
+                    adat.betuSzam
+                        ? "Betűk száma: " +
+                            adat.betuSzam
+                        : "";
+            }
+
+            if (
+                Array.isArray(
+                    adat.jatekosok
+                )
+            ) {
+                pontListaFrissites(
+                    adat.jatekosok
+                );
+            }
+
+            if (
+                hasznaltBetuk
+            ) {
+                hasznaltBetuk.hidden =
+                    true;
+
+                hasznaltBetuk.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+            }
+
+            utolsoHibasBetuk =
+                Array.isArray(
+                    adat.hibasBetuk
+                )
+                    ? adat.hibasBetuk.slice()
+                    : [];
+
+            if (
+                hibasBetuk
+            ) {
+                hibasBetuk.textContent =
+                    utolsoHibasBetuk.length
+                        ? "Hibás betűk: " +
+                            utolsoHibasBetuk.join(
+                                ", "
+                            )
+                        : "Hibás betűk: még nincs.";
+            }
+
+            if (
+                hibasMegfejtesek
+            ) {
+                hibasMegfejtesek.textContent =
+                    adat.hibasTippek &&
+                    adat.hibasTippek.length
+                        ? "Hibás megfejtések: " +
+                            adat.hibasTippek.join(
+                                " | "
+                            )
+                        : "Hibás megfejtések: még nincs.";
+            }
+
+            kezelofeluletFrissites();
+
+            if (
+                (
+                    varBeture ||
+                    maganhangzoVasarlasMod
+                ) &&
+                aktualisJatekosId ===
+                    sajatJatekosId &&
+                betuMezo &&
+                !betuMezo.disabled
+            ) {
+                window.setTimeout(
+                    function () {
+                        betuMezo.focus();
+                    },
+                    50
+                );
+            }
+        }
+    );
+
+    socket.on(
+        "porgetesEredmeny",
+        function (
+            adat
+        ) {
+            if (
+                !adat ||
+                adat.jatekosId !==
+                    sajatJatekosId
+            ) {
+                return;
+            }
+
+            porgetesFolyamatban =
+                false;
+
+            maganhangzoVasarlasMod =
+                false;
+
+            if (
+                adat.betuJohet
+            ) {
+                aktualisKerekErtek =
+                    adat.ertek;
+
+                varBeture =
+                    true;
+
+                if (
+                    kerekEredmeny
+                ) {
+                    kerekEredmeny.textContent =
+                        magyarPontszam(
+                            adat.ertek
+                        ) +
+                        " pont. Írjon egy mássalhangzót, " +
+                        "vagy vásároljon magánhangzót 1000 pontért.";
+                }
+            } else {
+                aktualisKerekErtek =
+                    null;
+
+                varBeture =
+                    false;
+            }
+
+            kezelofeluletFrissites();
+
+            if (
+                varBeture &&
+                betuMezo &&
+                !betuMezo.disabled
+            ) {
+                window.setTimeout(
+                    function () {
+                        betuMezo.focus();
+                    },
+                    50
+                );
+            }
+        }
+    );
+
+    socket.on(
+        "betuEredmeny",
+        function (
+            adat
+        ) {
+            if (
+                betuUzenet
+            ) {
+                betuUzenet.textContent =
+                    adat.uzenet ||
+                    "";
+            }
+
+            if (
+                adat &&
+                adat.vasarlas
+            ) {
+                bemondas(
+                    adat.uzenet ||
+                    "A magánhangzó vásárlása megtörtént."
+                );
+            }
+
+            if (
+                !adat.siker
+            ) {
+                if (
+                    betuMezo
+                ) {
+                    betuMezo.focus();
+                }
+
+                return;
+            }
+
+            if (
+                adat.talalat
+            ) {
+                if (
+                    adat.kesz
+                ) {
+                    gyozelmiHang();
+                } else {
+                    helyesBetuHang();
+                }
+            } else {
+                hibasBetuHang();
+            }
+
+            varBeture =
+                false;
+
+            maganhangzoVasarlasMod =
+                false;
+
+            aktualisKerekErtek =
+                null;
+
+            if (
+                betuMezo
+            ) {
+                betuMezo.value =
+                    "";
+            }
+
+            kezelofeluletFrissites();
+        }
+    );
+
+    socket.on(
+        "megfejtesEredmeny",
+        function (
+            adat
+        ) {
+            if (
+                megfejtesUzenet
+            ) {
+                megfejtesUzenet.textContent =
+                    adat.uzenet ||
+                    "";
+            }
+
+            if (
+                adat.helyes
+            ) {
+                gyozelmiHang();
+
+                varBeture =
+                    false;
+
+                maganhangzoVasarlasMod =
+                    false;
+
+                aktualisKerekErtek =
+                    null;
+
+                if (
+                    feladvanyKijelzes &&
+                    adat.megfejtes
+                ) {
+                    feladvanyKijelzes.textContent =
+                        adat.megfejtes;
+                }
+
+                return;
+            }
+
+            hibasBetuHang();
+
+            aktualisKerekErtek =
+                null;
+
+            varBeture =
+                false;
+
+            maganhangzoVasarlasMod =
+                false;
+
+            kezelofeluletFrissites();
+        }
+    );
 }
+
+// ==================================================
+// JÁTÉK INDÍTÁSA
+// ==================================================
+
+if (
+    jatekInditasGomb
+) {
+    jatekInditasGomb.addEventListener(
+        "click",
+        function () {
+            audioContextInditas();
+
+            klikkHang();
+
+            varakozoZeneLeallitas();
+
+            jatekInditasGomb.disabled =
+                true;
+
+            if (
+                socket
+            ) {
+                socket.emit(
+                    "jatekInditas"
+                );
+            }
+        }
+    );
+}
+
+// ==================================================
+// KATEGÓRIA KÜLDÉSE
+// ==================================================
+
+function kategoriaKuldes() {
+    if (
+        !socket ||
+        !kategoriaraVar ||
+        kategoriatValasztoId !==
+            sajatJatekosId ||
+        !kategoriaValaszto ||
+        !kategoriaValaszto.value
+    ) {
+        return;
+    }
+
+    socket.emit(
+        "kategoriaValasztas",
+        kategoriaValaszto.value
+    );
+}
+
+if (
+    kategoriaValasztasGomb
+) {
+    kategoriaValasztasGomb.addEventListener(
+        "click",
+        function () {
+            klikkHang();
+
+            kategoriaKuldes();
+        }
+    );
+}
+
+if (
+    kategoriaVeglegesitesGomb
+) {
+    kategoriaVeglegesitesGomb.addEventListener(
+        "click",
+        function () {
+            if (
+                socket
+            ) {
+                klikkHang();
+
+                socket.emit(
+                    "kategoriaVeglegesites"
+                );
+            }
+        }
+    );
+}
+
+if (
+    kategoriaMasikGomb
+) {
+    kategoriaMasikGomb.addEventListener(
+        "click",
+        function () {
+            if (
+                socket
+            ) {
+                klikkHang();
+
+                socket.emit(
+                    "kategoriaMasikValasztas"
+                );
+            }
+        }
+    );
+}
+
+// ==================================================
+// SZABAD FELADVÁNY
+// ==================================================
 
 function szabadFeladvanyKuldes() {
     if (
@@ -2293,6 +3375,7 @@ if (
         "click",
         function () {
             klikkHang();
+
             szabadFeladvanyKuldes();
         }
     );
@@ -2318,7 +3401,7 @@ if (
 }
 
 // ==================================================
-// TÁVOLLÉT
+// TÁVOLLÉT ÉS ÚJ KÖR
 // ==================================================
 
 if (
@@ -2373,256 +3456,6 @@ if (
 }
 
 // ==================================================
-// ÚJ KÖR
-// ==================================================
-
-if (
-    socket
-) {
-    socket.on(
-        "ujKor",
-        function (
-            adat
-        ) {
-            kategoriaraVar =
-                false;
-
-            kategoriaMegerositesreVar =
-                false;
-
-            szabadFeladvanyraVar =
-                false;
-
-            korLezart =
-                false;
-
-            kategoriatValasztoId =
-                null;
-
-            aktualisKerekErtek =
-                null;
-
-            varBeture =
-                false;
-
-            porgetesFolyamatban =
-                false;
-
-            if (
-                kategoriaKijelzes
-            ) {
-                kategoriaKijelzes.textContent =
-                    adat.kategoria;
-            }
-
-            if (
-                kerekEredmeny
-            ) {
-                kerekEredmeny.textContent =
-                    "A kerék még nem lett megpörgetve.";
-            }
-
-            kezelofeluletFrissites();
-        }
-    );
-
-    socket.on(
-        "korVege",
-        function (
-            adat
-        ) {
-            korLezart =
-                true;
-
-            aktualisKerekErtek =
-                null;
-
-            varBeture =
-                false;
-
-            porgetesFolyamatban =
-                false;
-
-            if (
-                kerekEredmeny
-            ) {
-                kerekEredmeny.textContent =
-                    adat &&
-                    adat.uzenet
-                        ? adat.uzenet
-                        : "A kör véget ért.";
-            }
-
-            kezelofeluletFrissites();
-        }
-    );
-}
-
-// ==================================================
-// JÁTÉKÁLLAPOT
-// ==================================================
-
-if (
-    socket
-) {
-    socket.on(
-        "jatekAllapot",
-        function (
-            adat
-        ) {
-            aktualisJatekosId =
-                adat.soronLevoId;
-
-            aktualisJatekosNev =
-                adat.soronLevoNev;
-
-            kategoriatValasztoId =
-                adat.kategoriatValasztoId;
-
-            kategoriaraVar =
-                Boolean(
-                    adat.kategoriaraVar
-                );
-
-            kategoriaMegerositesreVar =
-                Boolean(
-                    adat.kategoriaMegerositesreVar
-                );
-
-            kategoriaJelolt =
-                adat.kategoriaJelolt ||
-                "";
-
-            korLezart =
-                Boolean(
-                    adat.korLezart
-                );
-
-            szabadFeladvanyraVar =
-                Boolean(
-                    adat.szabadFeladvanyraVar
-                );
-
-            aktualisKerekErtek =
-                adat.aktualisKerekErtek;
-
-            const szamosKerekErtek =
-                vanValodiSzamosKerekErtek();
-
-            if (
-                aktualisJatekosId ===
-                    sajatJatekosId &&
-                szamosKerekErtek &&
-                !kategoriaraVar &&
-                !kategoriaMegerositesreVar &&
-                !szabadFeladvanyraVar &&
-                !korLezart
-            ) {
-                varBeture =
-                    true;
-            } else if (
-                !szamosKerekErtek
-            ) {
-                varBeture =
-                    false;
-            }
-
-            if (
-                adat.kategoria &&
-                kategoriaKijelzes
-            ) {
-                kategoriaKijelzes.textContent =
-                    adat.kategoria;
-            }
-
-            if (
-                feladvanyKijelzes
-            ) {
-                feladvanyKijelzes.textContent =
-                    adat.feladvany ||
-                    "";
-            }
-
-            if (
-                betuSzamKijelzes
-            ) {
-                betuSzamKijelzes.textContent =
-                    adat.betuSzam
-                        ? "Betűk száma: " +
-                          adat.betuSzam
-                        : "";
-            }
-
-            if (
-                Array.isArray(
-                    adat.jatekosok
-                )
-            ) {
-                pontListaFrissites(
-                    adat.jatekosok
-                );
-            }
-
-            if (
-                hasznaltBetuk
-            ) {
-                hasznaltBetuk.textContent =
-                    adat.hasznaltBetuk &&
-                    adat.hasznaltBetuk.length
-                        ? "Választott betűk: " +
-                          adat.hasznaltBetuk.join(
-                              ", "
-                          )
-                        : "Választott betűk: még nincs.";
-            }
-
-            if (
-                hibasBetuk
-            ) {
-                hibasBetuk.textContent =
-                    adat.hibasBetuk &&
-                    adat.hibasBetuk.length
-                        ? "Hibás betűk: " +
-                          adat.hibasBetuk.join(
-                              ", "
-                          )
-                        : "Hibás betűk: még nincs.";
-            }
-
-            if (
-                hibasMegfejtesek
-            ) {
-                hibasMegfejtesek.textContent =
-                    adat.hibasTippek &&
-                    adat.hibasTippek.length
-                        ? "Hibás megfejtések: " +
-                          adat.hibasTippek.join(
-                              " | "
-                          )
-                        : "Hibás megfejtések: még nincs.";
-            }
-
-            kezelofeluletFrissites();
-
-            if (
-                varBeture &&
-                aktualisJatekosId ===
-                    sajatJatekosId &&
-                betuMezo &&
-                !betuMezo.disabled
-            ) {
-                window.setTimeout(
-                    function () {
-                        betuMezo.focus();
-                    },
-                    50
-                );
-            }
-        }
-    );
-}
-
-// ==================================================
 // PÖRGETÉS
 // ==================================================
 
@@ -2636,6 +3469,9 @@ function porgetesInditas() {
     }
 
     audioContextInditas();
+
+    maganhangzoVasarlasMod =
+        false;
 
     porgetesFolyamatban =
         true;
@@ -2688,7 +3524,7 @@ function porgetesInditas() {
                     kerekEredmeny
                 ) {
                     kerekEredmeny.textContent =
-                        "Csőd.";
+                        "Csőd. Az összpontszáma lenullázódott.";
                 }
             } else if (
                 eredmeny ===
@@ -2717,8 +3553,11 @@ function porgetesInditas() {
                     kerekEredmeny
                 ) {
                     kerekEredmeny.textContent =
-                        eredmeny +
-                        " pont. Írjon egy betűt.";
+                        magyarPontszam(
+                            eredmeny
+                        ) +
+                        " pont. Írjon egy mássalhangzót, " +
+                        "vagy vásároljon magánhangzót 1000 pontért.";
                 }
             }
 
@@ -2747,112 +3586,18 @@ if (
         "click",
         porgetesInditas
     );
-}
 
-document.addEventListener(
-    "keydown",
-    function (
-        event
-    ) {
-        if (
-            event.key.toLowerCase() !==
-            "p"
-        ) {
-            return;
-        }
-
-        const aktivElem =
-            document.activeElement;
-
-        if (
-            aktivElem &&
-            [
-                "INPUT",
-                "TEXTAREA",
-                "SELECT"
-            ].includes(
-                aktivElem.tagName
-            )
-        ) {
-            return;
-        }
-
-        if (
-            !porgetesGomb ||
-            porgetesGomb.disabled
-        ) {
-            return;
-        }
-
-        event.preventDefault();
-
-        porgetesInditas();
-    }
-);
-
-if (
-    socket
-) {
-    socket.on(
-        "porgetesEredmeny",
-        function (
-            adat
-        ) {
-            if (
-                !adat ||
-                adat.jatekosId !==
-                sajatJatekosId
-            ) {
-                return;
-            }
-
-            porgetesFolyamatban =
-                false;
-
-            if (
-                adat.betuJohet
-            ) {
-                aktualisKerekErtek =
-                    adat.ertek;
-
-                varBeture =
-                    true;
-
-                if (
-                    kerekEredmeny
-                ) {
-                    kerekEredmeny.textContent =
-                        adat.ertek +
-                        " pont. Írjon egy betűt.";
-                }
-            } else {
-                aktualisKerekErtek =
-                    null;
-
-                varBeture =
-                    false;
-            }
-
-            kezelofeluletFrissites();
-
-            if (
-                varBeture &&
-                betuMezo &&
-                !betuMezo.disabled
-            ) {
-                window.setTimeout(
-                    function () {
-                        betuMezo.focus();
-                    },
-                    50
-                );
-            }
-        }
+    porgetesGomb.setAttribute(
+        "aria-keyshortcuts",
+        "Alt+P"
     );
+
+    porgetesGomb.textContent =
+        "Pörgetés (Alt+P)";
 }
 
 // ==================================================
-// BETŰ
+// BETŰ KÜLDÉSE
 // ==================================================
 
 function betuKuldes() {
@@ -2860,7 +3605,10 @@ function betuKuldes() {
         !socket ||
         !betuMezo ||
         betuMezo.disabled ||
-        !varBeture
+        (
+            !varBeture &&
+            !maganhangzoVasarlasMod
+        )
     ) {
         return;
     }
@@ -2877,6 +3625,59 @@ function betuKuldes() {
             betuUzenet.textContent =
                 "Adj meg egy betűt.";
         }
+
+        betuMezo.focus();
+
+        return;
+    }
+
+    const nagyBetu =
+        betu.toLocaleUpperCase(
+            "hu-HU"
+        );
+
+    if (
+        maganhangzoVasarlasMod &&
+        !maganhangzoE(
+            nagyBetu
+        )
+    ) {
+        if (
+            betuUzenet
+        ) {
+            betuUzenet.textContent =
+                "Most magánhangzó vásárlása van kiválasztva. " +
+                "Adjon meg egy magyar magánhangzót.";
+        }
+
+        bemondas(
+            "Most magánhangzó vásárlása van kiválasztva. " +
+            "Adjon meg egy magyar magánhangzót."
+        );
+
+        betuMezo.focus();
+
+        return;
+    }
+
+    if (
+        varBeture &&
+        maganhangzoE(
+            nagyBetu
+        )
+    ) {
+        if (
+            betuUzenet
+        ) {
+            betuUzenet.textContent =
+                "Magánhangzót vásárolni kell. " +
+                "Használja a Magánhangzó vásárlása gombot vagy az Alt+M billentyűt.";
+        }
+
+        bemondas(
+            "Magánhangzót vásárolni kell. " +
+            "Nyomja meg az Alt plusz M billentyűkombinációt."
+        );
 
         betuMezo.focus();
 
@@ -2914,66 +3715,6 @@ if (
 
                 betuKuldes();
             }
-        }
-    );
-}
-
-if (
-    socket
-) {
-    socket.on(
-        "betuEredmeny",
-        function (
-            adat
-        ) {
-            if (
-                betuUzenet
-            ) {
-                betuUzenet.textContent =
-                    adat.uzenet ||
-                    "";
-            }
-
-            if (
-                !adat.siker
-            ) {
-                if (
-                    betuMezo
-                ) {
-                    betuMezo.focus();
-                }
-
-                return;
-            }
-
-            if (
-                adat.talalat
-            ) {
-                if (
-                    adat.kesz
-                ) {
-                    gyozelmiHang();
-                } else {
-                    helyesBetuHang();
-                }
-            } else {
-                hibasBetuHang();
-            }
-
-            varBeture =
-                false;
-
-            aktualisKerekErtek =
-                null;
-
-            if (
-                betuMezo
-            ) {
-                betuMezo.value =
-                    "";
-            }
-
-            kezelofeluletFrissites();
         }
     );
 }
@@ -3035,56 +3776,116 @@ if (
     );
 }
 
-if (
-    socket
-) {
-    socket.on(
-        "megfejtesEredmeny",
-        function (
-            adat
+// ==================================================
+// JAWS-BARÁT GYORSBILLENTYŰK
+// ==================================================
+
+document.addEventListener(
+    "keydown",
+    function (
+        event
+    ) {
+        if (
+            event.key ===
+                "Escape" &&
+            sugoAblak &&
+            !sugoAblak.hidden
+        ) {
+            event.preventDefault();
+
+            sugoBezasa();
+
+            return;
+        }
+
+        if (
+            !event.altKey ||
+            event.ctrlKey ||
+            event.metaKey
+        ) {
+            return;
+        }
+
+        const billentyu =
+            String(
+                event.key ||
+                ""
+            ).toLocaleLowerCase(
+                "hu-HU"
+            );
+
+        if (
+            ![
+                "p",
+                "h",
+                "m",
+                "s",
+                "i"
+            ].includes(
+                billentyu
+            )
+        ) {
+            return;
+        }
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        if (
+            billentyu ===
+            "i"
+        ) {
+            sugoMegnyitasa();
+
+            return;
+        }
+
+        if (
+            billentyu ===
+            "h"
+        ) {
+            hibasBetukFelolvasasa();
+
+            return;
+        }
+
+        if (
+            billentyu ===
+            "s"
+        ) {
+            pontszamokFelolvasasa();
+
+            return;
+        }
+
+        if (
+            billentyu ===
+            "m"
+        ) {
+            maganhangzoVasarlasInditas();
+
+            return;
+        }
+
+        if (
+            billentyu ===
+            "p"
         ) {
             if (
-                megfejtesUzenet
+                porgetesGomb &&
+                !porgetesGomb.disabled
             ) {
-                megfejtesUzenet.textContent =
-                    adat.uzenet ||
-                    "";
+                porgetesInditas();
+            } else {
+                bemondas(
+                    "Most nem lehet pörgetni."
+                );
             }
-
-            if (
-                adat.helyes
-            ) {
-                gyozelmiHang();
-
-                varBeture =
-                    false;
-
-                aktualisKerekErtek =
-                    null;
-
-                if (
-                    feladvanyKijelzes &&
-                    adat.megfejtes
-                ) {
-                    feladvanyKijelzes.textContent =
-                        adat.megfejtes;
-                }
-
-                return;
-            }
-
-            hibasBetuHang();
-
-            aktualisKerekErtek =
-                null;
-
-            varBeture =
-                false;
-
-            kezelofeluletFrissites();
         }
-    );
-}
+    },
+    true
+);
 
 // ==================================================
 // BIZTONSÁGI FRISSÍTÉSEK
