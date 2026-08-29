@@ -441,6 +441,11 @@ function jatekAllapotKuldes(
                     )
                     : "",
 
+            teljesMegfejtes:
+                feladvany && szoba.korLezart
+                    ? feladvany.megfejtes
+                    : "",
+
             betuSzam:
                 feladvany
                     ? betukSzama(
@@ -1167,77 +1172,102 @@ io.on(
         // KATEGÓRIA KIVÁLASZTÁSA
         // ==========================================
 
-        socket.on(
-            "kategoriaValasztas",
-            function (
+ socket.on(
+    "kategoriaValasztas",
+    function (
+        kategoria
+    ) {
+        const szobaNev =
+            socket.data
+                .szobaNev;
+
+        const szoba =
+            szobak[
+                szobaNev
+            ];
+
+        if (
+            !szoba ||
+            !szoba.kategoriaraVar
+        ) {
+            return;
+        }
+
+        if (
+            socket.id !==
+            szoba.kategoriatValasztoId
+        ) {
+            socket.emit(
+                "hiba",
+                "Most nem Ön választ kategóriát."
+            );
+
+            return;
+        }
+
+        if (
+            !engedelyezettKategoria(
                 kategoria
-            ) {
-                const szobaNev =
-                    socket.data
-                        .szobaNev;
+            )
+        ) {
+            socket.emit(
+                "hiba",
+                "Ismeretlen kategória."
+            );
 
-                const szoba =
-                    szobak[
-                        szobaNev
-                    ];
+            return;
+        }
 
-                if (
-                    !szoba ||
-                    !szoba.kategoriaraVar
-                ) {
-                    return;
+        szoba.kategoriaraVar =
+            false;
+
+        szoba.kategoriaMegerositesreVar =
+            false;
+
+        szoba.kategoriaJelolt =
+            null;
+
+        if (
+            kategoria ===
+            "Szabad kategória"
+        ) {
+            szoba.szabadFeladvanyraVar =
+                true;
+
+            szoba.feladvany =
+                null;
+
+            socket.emit(
+                "szabadFeladvanyKeres",
+                {
+                    uzenet:
+                        "Írja be a kategória megnevezését és a saját feladványt."
                 }
+            );
 
-                if (
-                    socket.id !==
-                    szoba.kategoriatValasztoId
-                ) {
-                    socket.emit(
-                        "hiba",
-                        "Most nem Ön választ kategóriát."
-                    );
+            jatekAllapotKuldes(
+                szobaNev
+            );
 
-                    return;
-                }
+            return;
+        }
 
-                if (
-                    !engedelyezettKategoria(
-                        kategoria
-                    )
-                ) {
-                    socket.emit(
-                        "hiba",
-                        "Ismeretlen kategória."
-                    );
+        const siker =
+            ujKorInditas(
+                szobaNev,
+                kategoria
+            );
 
-                    return;
-                }
-
-                szoba.kategoriaJelolt =
-                    kategoria;
-
-                szoba.kategoriaraVar =
-                    false;
-
-                szoba.kategoriaMegerositesreVar =
-                    true;
-
-                socket.emit(
-                    "kategoriaMegerosites",
-                    {
-                        kategoria:
-                            kategoria,
-
-                        uzenet:
-                            "Ezt a kategóriát választotta. Véglegesítheti, vagy választhat másikat."
-                    }
-                );
-
-                jatekAllapotKuldes(
-                    szobaNev
-                );
-            }
-        );
+        if (
+            !siker
+        ) {
+            socket.emit(
+                "hiba",
+                "Nem sikerült feladványt választani ebből a kategóriából."
+            );
+        }
+    }
+);
 
         // ==========================================
         // MÁS KATEGÓRIA VÁLASZTÁSA
@@ -1796,6 +1826,45 @@ io.on(
         );
 
         // ==========================================
+        // PÖRGETÉS INDÍTÁSA - HANG MINDENKINEK
+        // ==========================================
+
+        socket.on(
+            "porgetesInditas",
+            function (adat) {
+                const szobaNev = socket.data.szobaNev;
+                const szoba = szobak[szobaNev];
+                const ertek = adat && adat.ertek;
+
+                if (
+                    !szoba ||
+                    !szoba.feladvany ||
+                    szoba.kategoriaraVar ||
+                    szoba.szabadFeladvanyraVar ||
+                    szoba.korLezart ||
+                    !KEREK_ERTEKEK.includes(ertek)
+                ) {
+                    return;
+                }
+
+                const soronLevo = aktualisJatekos(szoba);
+
+                if (!soronLevo || soronLevo.id !== socket.id) {
+                    return;
+                }
+
+                socket.broadcast.to(szobaNev).emit(
+                    "porgetesInditas",
+                    {
+                        jatekosId: socket.id,
+                        jatekosNev: soronLevo.nev,
+                        ertek: ertek
+                    }
+                );
+            }
+        );
+
+        // ==========================================
         // PÖRGETÉS
         // ==========================================
 
@@ -1962,513 +2031,124 @@ io.on(
 
         // ==========================================
         // BETŰ VÁLASZTÁSA
+        // Minden betű pörgetés után választható.
+        // A magánhangzó ingyenes, nincs külön vásárlási mód.
         // ==========================================
 
         socket.on(
             "betuValasztas",
-            function (
-                betu
-            ) {
-                const szobaNev =
-                    socket.data
-                        .szobaNev;
-
-                const szoba =
-                    szobak[
-                        szobaNev
-                    ];
+            function (betu) {
+                const szobaNev = socket.data.szobaNev;
+                const szoba = szobak[szobaNev];
 
                 if (
                     !szoba ||
                     !szoba.feladvany ||
                     szoba.kategoriaraVar ||
-                    szoba.kategoriaMegerositesreVar ||
                     szoba.szabadFeladvanyraVar ||
                     szoba.korLezart
                 ) {
                     return;
                 }
 
-                const soronLevo =
-                    aktualisJatekos(
-                        szoba
-                    );
+                const soronLevo = aktualisJatekos(szoba);
 
-                if (
-                    !soronLevo ||
-                    soronLevo.id !==
-                    socket.id
-                ) {
-                    socket.emit(
-                        "betuEredmeny",
-                        {
-                            siker:
-                                false,
-
-                            uzenet:
-                                "Most nem Ön van soron."
-                        }
-                    );
-
+                if (!soronLevo || soronLevo.id !== socket.id) {
+                    socket.emit("betuEredmeny", {
+                        siker: false,
+                        uzenet: "Most nem Ön van soron."
+                    });
                     return;
                 }
 
-                const tisztaBetu =
-                    normalizalSzoveg(
-                        betu
-                    );
+                const tisztaBetu = normalizalSzoveg(betu);
 
-                if (
-                    !/^[A-ZÁÉÍÓÖŐÚÜŰ]$/.test(
-                        tisztaBetu
-                    )
-                ) {
-                    socket.emit(
-                        "betuEredmeny",
-                        {
-                            siker:
-                                false,
-
-                            uzenet:
-                                "Egyetlen magyar betűt adjon meg."
-                        }
-                    );
-
+                if (!/^[A-ZÁÉÍÓÖŐÚÜŰ]$/.test(tisztaBetu)) {
+                    socket.emit("betuEredmeny", {
+                        siker: false,
+                        uzenet: "Egyetlen magyar betűt adjon meg."
+                    });
                     return;
                 }
 
-                // ==================================
-                // MÁR HASZNÁLT BETŰ
-                // ==================================
-
-                if (
-                    szoba.feladvany
-                        .hasznaltBetuk
-                        .includes(
-                            tisztaBetu
-                        )
-                ) {
-                    socket.emit(
-                        "betuEredmeny",
-                        {
-                            siker:
-                                false,
-
-                            uzenet:
-                                "Ezt a betűt már választották."
-                        }
-                    );
-
+                if (szoba.feladvany.hasznaltBetuk.includes(tisztaBetu)) {
+                    socket.emit("betuEredmeny", {
+                        siker: false,
+                        uzenet: "Ezt a betűt már választották."
+                    });
                     return;
                 }
 
-                const ezMaganhangzo =
-                    maganhangzoE(
-                        tisztaBetu
-                    );
+                const kerekErtek = Number(szoba.aktualisKerekErtek);
 
-                // ==================================
-                // MAGÁNHANGZÓ VÁSÁRLÁSA
-                // ==================================
-
-                if (
-                    ezMaganhangzo
-                ) {
-                    if (
-                        soronLevo.pont <
-                        MAGANHANGZO_AR
-                    ) {
-                        socket.emit(
-                            "betuEredmeny",
-                            {
-                                siker:
-                                    false,
-
-                                vasarlas:
-                                    true,
-
-                                uzenet:
-                                    "Nincs elegendő pontja magánhangzó vásárlásához. " +
-                                    MAGANHANGZO_AR +
-                                    " pont szükséges."
-                            }
-                        );
-
-                        return;
-                    }
-
-                    soronLevo.pont -=
-                        MAGANHANGZO_AR;
-
-                    szoba.feladvany
-                        .hasznaltBetuk
-                        .push(
-                            tisztaBetu
-                        );
-
-                    const darab =
-                        betuDarab(
-                            szoba.feladvany
-                                .megfejtes,
-                            tisztaBetu
-                        );
-
-                    // ==============================
-                    // TALÁLT MAGÁNHANGZÓ
-                    // ==============================
-
-                    if (
-                        darab >
-                        0
-                    ) {
-                        szoba.feladvany
-                            .felfedettBetuk
-                            .push(
-                                tisztaBetu
-                            );
-
-                        const kesz =
-                            feladvanyKesz(
-                                szoba.feladvany
-                            );
-
-                        const teljesMegfejtes =
-                            szoba.feladvany
-                                .megfejtes;
-
-                        socket.emit(
-                            "betuEredmeny",
-                            {
-                                siker:
-                                    true,
-
-                                talalat:
-                                    true,
-
-                                vasarlas:
-                                    true,
-
-                                betu:
-                                    tisztaBetu,
-
-                                darab:
-                                    darab,
-
-                                ar:
-                                    MAGANHANGZO_AR,
-
-                                kesz:
-                                    kesz,
-
-                                megfejtes:
-                                    kesz
-                                        ? teljesMegfejtes
-                                        : null,
-
-                                uzenet:
-                                    kesz
-                                        ? "A magánhangzó megvásárlása sikeres. " +
-                                          darab +
-                                          " találat. A feladvány teljesen elkészült."
-                                        : "A magánhangzó megvásárlása sikeres. " +
-                                          darab +
-                                          " találat. 1000 pont levonva."
-                            }
-                        );
-
-                        szoba.aktualisKerekErtek =
-                            null;
-
-                        jatekosListaKuldes(
-                            szobaNev
-                        );
-
-                        jatekAllapotKuldes(
-                            szobaNev
-                        );
-
-                        if (
-                            kesz
-                        ) {
-                            szoba.korLezart =
-                                true;
-
-                            io.to(
-                                szobaNev
-                            ).emit(
-                                "korVege",
-                                {
-                                    uzenet:
-                                        "A kör véget ért. Bármelyik aktív játékos indíthat új kört."
-                                }
-                            );
-
-                            jatekAllapotKuldes(
-                                szobaNev
-                            );
-                        }
-
-                        return;
-                    }
-
-                    // ==============================
-                    // NINCS BENNE A MAGÁNHANGZÓ
-                    // ==============================
-
-                    if (
-                        !szoba.feladvany
-                            .hibasBetuk
-                            .includes(
-                                tisztaBetu
-                            )
-                    ) {
-                        szoba.feladvany
-                            .hibasBetuk
-                            .push(
-                                tisztaBetu
-                            );
-                    }
-
-                    socket.emit(
-                        "betuEredmeny",
-                        {
-                            siker:
-                                true,
-
-                            talalat:
-                                false,
-
-                            vasarlas:
-                                true,
-
-                            betu:
-                                tisztaBetu,
-
-                            darab:
-                                0,
-
-                            ar:
-                                MAGANHANGZO_AR,
-
-                            kesz:
-                                false,
-
-                            uzenet:
-                                "A megvásárolt magánhangzó nem szerepel a feladványban. 1000 pont levonva."
-                        }
-                    );
-
-                    szoba.aktualisKerekErtek =
-                        null;
-
-                    kovetkezoJatekos(
-                        szoba
-                    );
-
-                    jatekosListaKuldes(
-                        szobaNev
-                    );
-
-                    jatekAllapotKuldes(
-                        szobaNev
-                    );
-
+                if (!Number.isFinite(kerekErtek)) {
+                    socket.emit("betuEredmeny", {
+                        siker: false,
+                        uzenet: "Betű választása előtt pörgesse meg a kereket."
+                    });
                     return;
                 }
 
-                // ==================================
-                // MÁSSALHANGZÓ
-                // ==================================
+                szoba.feladvany.hasznaltBetuk.push(tisztaBetu);
 
-                const kerekErtek =
-                    Number(
-                        szoba
-                            .aktualisKerekErtek
-                    );
-
-                if (
-                    !Number.isFinite(
-                        kerekErtek
-                    )
-                ) {
-                    socket.emit(
-                        "betuEredmeny",
-                        {
-                            siker:
-                                false,
-
-                            uzenet:
-                                "Mássalhangzó választása előtt pörgesse meg a kereket."
-                        }
-                    );
-
-                    return;
-                }
-
-                szoba.feladvany
-                    .hasznaltBetuk
-                    .push(
-                        tisztaBetu
-                    );
-
-                const darab =
-                    betuDarab(
-                        szoba.feladvany
-                            .megfejtes,
-                        tisztaBetu
-                    );
-
-                // ==================================
-                // TALÁLT MÁSSALHANGZÓ
-                // ==================================
-
-                if (
-                    darab >
-                    0
-                ) {
-                    szoba.feladvany
-                        .felfedettBetuk
-                        .push(
-                            tisztaBetu
-                        );
-
-                    soronLevo.pont +=
-                        kerekErtek *
-                        darab;
-
-                    const kesz =
-                        feladvanyKesz(
-                            szoba.feladvany
-                        );
-
-                    const teljesMegfejtes =
-                        szoba.feladvany
-                            .megfejtes;
-
-                    socket.emit(
-                        "betuEredmeny",
-                        {
-                            siker:
-                                true,
-
-                            talalat:
-                                true,
-
-                            vasarlas:
-                                false,
-
-                            betu:
-                                tisztaBetu,
-
-                            darab:
-                                darab,
-
-                            kesz:
-                                kesz,
-
-                            megfejtes:
-                                kesz
-                                    ? teljesMegfejtes
-                                    : null,
-
-                            uzenet:
-                                kesz
-                                    ? "A feladvány teljesen elkészült."
-                                    : "A betű szerepel a feladványban. " +
-                                      darab +
-                                      " találat."
-                        }
-                    );
-
-                    szoba.aktualisKerekErtek =
-                        null;
-
-                    jatekosListaKuldes(
-                        szobaNev
-                    );
-
-                    jatekAllapotKuldes(
-                        szobaNev
-                    );
-
-                    if (
-                        kesz
-                    ) {
-                        szoba.korLezart =
-                            true;
-
-                        io.to(
-                            szobaNev
-                        ).emit(
-                            "korVege",
-                            {
-                                uzenet:
-                                    "A kör véget ért. Bármelyik aktív játékos indíthat új kört."
-                            }
-                        );
-
-                        jatekAllapotKuldes(
-                            szobaNev
-                        );
-                    }
-
-                    return;
-                }
-
-                // ==================================
-                // HIBÁS MÁSSALHANGZÓ
-                // ==================================
-
-                if (
-                    !szoba.feladvany
-                        .hibasBetuk
-                        .includes(
-                            tisztaBetu
-                        )
-                ) {
-                    szoba.feladvany
-                        .hibasBetuk
-                        .push(
-                            tisztaBetu
-                        );
-                }
-
-                socket.emit(
-                    "betuEredmeny",
-                    {
-                        siker:
-                            true,
-
-                        talalat:
-                            false,
-
-                        vasarlas:
-                            false,
-
-                        betu:
-                            tisztaBetu,
-
-                        darab:
-                            0,
-
-                        kesz:
-                            false,
-
-                        uzenet:
-                            "A betű nem szerepel a feladványban."
-                    }
+                const darab = betuDarab(
+                    szoba.feladvany.megfejtes,
+                    tisztaBetu
                 );
 
-                szoba.aktualisKerekErtek =
-                    null;
+                if (darab > 0) {
+                    szoba.feladvany.felfedettBetuk.push(tisztaBetu);
+                    soronLevo.pont += kerekErtek * darab;
 
-                kovetkezoJatekos(
-                    szoba
-                );
+                    const kesz = feladvanyKesz(szoba.feladvany);
+                    const teljesMegfejtes = szoba.feladvany.megfejtes;
 
-                jatekAllapotKuldes(
-                    szobaNev
-                );
+                    socket.emit("betuEredmeny", {
+                        siker: true,
+                        talalat: true,
+                        vasarlas: false,
+                        betu: tisztaBetu,
+                        darab: darab,
+                        kesz: kesz,
+                        megfejtes: kesz ? teljesMegfejtes : null,
+                        uzenet: kesz
+                            ? "A feladvány teljesen elkészült."
+                            : "A betű szerepel a feladványban. " + darab + " találat."
+                    });
+
+                    szoba.aktualisKerekErtek = null;
+                    jatekosListaKuldes(szobaNev);
+
+                    if (kesz) {
+                        szoba.korLezart = true;
+
+                        io.to(szobaNev).emit("korVege", {
+                            uzenet: "A kör véget ért. Bármelyik aktív játékos indíthat új kört.",
+                            megfejtes: teljesMegfejtes
+                        });
+                    }
+
+                    jatekAllapotKuldes(szobaNev);
+                    return;
+                }
+
+                if (!szoba.feladvany.hibasBetuk.includes(tisztaBetu)) {
+                    szoba.feladvany.hibasBetuk.push(tisztaBetu);
+                }
+
+                socket.emit("betuEredmeny", {
+                    siker: true,
+                    talalat: false,
+                    vasarlas: false,
+                    betu: tisztaBetu,
+                    darab: 0,
+                    kesz: false,
+                    uzenet: "A betű nem szerepel a feladványban."
+                });
+
+                szoba.aktualisKerekErtek = null;
+                kovetkezoJatekos(szoba);
+                jatekAllapotKuldes(szobaNev);
             }
         );
 
@@ -2600,7 +2280,9 @@ io.on(
                         "korVege",
                         {
                             uzenet:
-                                "A kör véget ért. Bármelyik aktív játékos indíthat új kört."
+                                "A kör véget ért. Bármelyik aktív játékos indíthat új kört.",
+                            megfejtes:
+                                teljesMegfejtes
                         }
                     );
 
