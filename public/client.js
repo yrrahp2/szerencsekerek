@@ -2004,8 +2004,12 @@ function kezelofeluletFrissites() {
         visszateresGomb.hidden =
             !sajatTavol;
 
+        // Folyamatban lévő körben a visszatérés csak a következő körre jegyezhető elő.
+        // A kör lezárása után viszont a gomb ismét legyen használható,
+        // hogy a távol lévő játékos azonnal vissza tudjon térni.
         visszateresGomb.disabled =
-            sajatVisszaterKovetkezoKorban;
+            sajatVisszaterKovetkezoKorban &&
+            !korLezart;
     }
 
     if (
