@@ -270,6 +270,11 @@ let utolsoHibasBetuk =
 let gyorsBemondo =
     null;
 
+// A feladvány JAWS-nézetét csak akkor építjük újra, ha maga a maszk változott.
+// Így egy közben érkező játékállapot-frissítés nem szakítja félbe a felolvasást.
+let utolsoFeladvanyMaszk =
+    null;
+
 let sugoGomb =
     null;
 
@@ -685,6 +690,7 @@ function sugoLetrehozasa() {
         "Alt+H: a hibás betűk felolvasása.",
         "Alt+S: az összes játékos aktuális pontszámának felolvasása.",
         "Alt+I: a játéksúgó megnyitása.",
+        "Alt+Q: kilépés a játékszobából és visszatérés a belépőképernyőre.",
         "Escape: a játéksúgó bezárása."
     ].forEach(
         function (
@@ -2978,6 +2984,8 @@ if (
                     !megfejtesAnimacioFolyamatban
                 ) {
                     feladvanyKijelzes.textContent = adat.teljesMegfejtes;
+                    feladvanyKijelzes.removeAttribute("aria-label");
+                    utolsoFeladvanyMaszk = null;
                 } else if (!korLezart) {
                     const maszk =
                         String(
@@ -2985,36 +2993,80 @@ if (
                             ""
                         );
 
-                    feladvanyKijelzes.textContent =
-                        Array.from(
-                            maszk
-                        )
-                            .map(
-                                function (
-                                    karakter
-                                ) {
-                                    if (
-                                        karakter ===
-                                        "_"
-                                    ) {
-                                        return "▁ ";
-                                    }
+                    // A feladványt csak akkor építjük újra, ha a maszk ténylegesen változott.
+                    // Ez fontos a JAWS-nak: a gyakori socket-frissítések különben
+                    // félbeszakíthatják a hosszú, ismétlődő „aláhúzás” felolvasást.
+                    if (utolsoFeladvanyMaszk !== maszk) {
+                        utolsoFeladvanyMaszk = maszk;
+                        feladvanyKijelzes.innerHTML = "";
+                        feladvanyKijelzes.removeAttribute("aria-label");
 
-                                    if (
-                                        karakter ===
-                                        " "
-                                    ) {
-                                        return "  ";
-                                    }
+                        // LÁTHATÓ FELADVÁNY
+                        // A szavakat külön inline-block elemekbe tesszük, ezért
+                        // közmondásnál és több szavas feladványnál biztosan látszik
+                        // a szóhatár, és a böngésző nem tudja összecsukni.
+                        const lathatoFeladvany = document.createElement("span");
+                        lathatoFeladvany.setAttribute("aria-hidden", "true");
 
-                                    return (
-                                        karakter +
-                                        " "
-                                    );
-                                }
-                            )
-                            .join("")
-                            .trimEnd();
+                        const szavak = maszk.split(" ");
+                        szavak.forEach(function (szo, index) {
+                            const szoElem = document.createElement("span");
+                            szoElem.style.display = "inline-block";
+                            szoElem.style.whiteSpace = "nowrap";
+                            szoElem.textContent = Array.from(szo)
+                                .map(function (karakter) {
+                                    return karakter + " ";
+                                })
+                                .join("")
+                                .trimEnd();
+
+                            lathatoFeladvany.appendChild(szoElem);
+
+                            if (index < szavak.length - 1) {
+                                // Valódi, jól látható szóköz a szavak között.
+                                lathatoFeladvany.appendChild(
+                                    document.createTextNode("\u00A0\u00A0\u00A0")
+                                );
+                            }
+                        });
+
+                        feladvanyKijelzes.appendChild(lathatoFeladvany);
+
+                        // JAWS-FELADVÁNY
+                        // MINDEN maszk-karakterhez pontosan EGY külön elem tartozik.
+                        // _  -> pontosan egyszer „aláhúzás”
+                        // szóköz -> pontosan egyszer „szóköz”
+                        // felfedett betű -> pontosan egyszer maga a betű
+                        const jawsFeladvany = document.createElement("span");
+                        jawsFeladvany.style.position = "absolute";
+                        jawsFeladvany.style.width = "1px";
+                        jawsFeladvany.style.height = "1px";
+                        jawsFeladvany.style.padding = "0";
+                        jawsFeladvany.style.margin = "-1px";
+                        jawsFeladvany.style.overflow = "hidden";
+                        jawsFeladvany.style.clip = "rect(0, 0, 0, 0)";
+                        jawsFeladvany.style.whiteSpace = "nowrap";
+                        jawsFeladvany.style.border = "0";
+
+                        Array.from(maszk).forEach(function (karakter) {
+                            const jawsKarakter = document.createElement("span");
+
+                            if (karakter === "_") {
+                                jawsKarakter.textContent = "aláhúzás";
+                            } else if (karakter === " ") {
+                                jawsKarakter.textContent = "szóköz";
+                            } else {
+                                jawsKarakter.textContent = karakter;
+                            }
+
+                            // Külön blokk = külön bejárható szövegegység.
+                            // Nem számozunk és nem csoportosítunk.
+                            jawsKarakter.style.display = "block";
+                            jawsFeladvany.appendChild(jawsKarakter);
+                        });
+
+                        feladvanyKijelzes.appendChild(jawsFeladvany);
+                    }
                 }
             }
 
@@ -3849,7 +3901,8 @@ document.addEventListener(
                 "p",
                 "h",
                 "s",
-                "i"
+                "i",
+                "q"
             ].includes(
                 billentyu
             )
@@ -3860,6 +3913,73 @@ document.addEventListener(
         event.preventDefault();
 
         event.stopPropagation();
+
+        if (
+            billentyu ===
+            "q"
+        ) {
+            varakozoZeneLeallitas();
+
+            if (socket) {
+                socket.disconnect();
+            }
+
+            sajatJatekosId = null;
+            sajatJatekosNev = "";
+            aktualisJatekosId = null;
+            aktualisJatekosNev = "";
+            kategoriatValasztoId = null;
+            kategoriaraVar = false;
+            kategoriaMegerositesreVar = false;
+            kategoriaJelolt = "";
+            szabadFeladvanyraVar = false;
+            korLezart = false;
+            aktualisKerekErtek = null;
+            varBeture = false;
+            maganhangzoVasarlasMod = false;
+            porgetesFolyamatban = false;
+            jatekMarElindult = false;
+            utolsoJatekosLista = [];
+            utolsoHibasBetuk = [];
+
+            if (jatekTer) {
+                jatekTer.hidden = true;
+            }
+
+            if (chatPanel) {
+                chatPanel.hidden = true;
+            }
+
+            if (belepes) {
+                belepes.hidden = false;
+            }
+
+            if (uzenet) {
+                uzenet.textContent =
+                    "Kilépett a játékszobából.";
+            }
+
+            // Alt+Q után a belépőképernyő teljesen használható legyen.
+            if (csatlakozasGomb) {
+                csatlakozasGomb.disabled =
+                    false;
+            }
+
+            if (socket) {
+                socket.connect();
+            }
+
+            window.setTimeout(
+                function () {
+                    if (jatekosNev) {
+                        jatekosNev.focus();
+                    }
+                },
+                30
+            );
+
+            return;
+        }
 
         if (
             billentyu ===
