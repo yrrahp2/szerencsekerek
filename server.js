@@ -866,11 +866,12 @@ io.on(
                     ];
 
                 if (
-                    szoba.jatekElindult
+                    szoba.jatekElindult &&
+                    !szoba.korLezart
                 ) {
                     socket.emit(
                         "hiba",
-                        "Ebben a szobában már elindult a játék."
+                        "Ebben a szobában éppen folyamatban van egy kör. A kör befejezése után lehet csatlakozni."
                     );
 
                     return;
@@ -976,6 +977,19 @@ io.on(
                         ? szoba.chatUzenetek
                         : []
                 );
+
+                if (
+                    szoba.jatekElindult &&
+                    szoba.korLezart
+                ) {
+                    socket.emit(
+                        "jatekElindult"
+                    );
+
+                    jatekAllapotKuldes(
+                        szobaNev
+                    );
+                }
             }
         );
 
