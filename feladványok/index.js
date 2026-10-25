@@ -1,5 +1,5 @@
 // ==================================================
-// SZERENCSEKERÉK 1.0
+// SZERENCSEKERÉK 1.1
 // FELADVÁNYOK KÖZPONTI BETÖLTŐ
 // ==================================================
 
@@ -8,6 +8,7 @@ const kategoriak = {
     "Étel és ital": require("./etel-es-ital"),
     "Film vagy sorozat": require("./film-vagy-sorozat"),
     "Foglalkozás": require("./foglalkozas"),
+    "Fogalom": require("./fogalom"),
     "Földrajz": require("./foldrajz"),
     "Használati tárgy": require("./hasznalati-targy"),
     "Közmondás vagy szólás": require("./kozmondas-vagy-szolas"),
