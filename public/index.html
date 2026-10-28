@@ -509,6 +509,12 @@
             }
         }
 
+
+        /* Külön játék indítása, a Szerencsekerék kódjától függetlenül */
+        .csillagsakk-valaszto { text-align:center; border:3px solid #ffcc00; }
+        .csillagsakk-valaszto a { display:block; padding:17px; background:#003399; color:#fff; border-radius:8px; font-size:23px; font-weight:bold; text-decoration:none; }
+        .csillagsakk-valaszto a:hover, .csillagsakk-valaszto a:focus { outline:4px solid #ffcc00; outline-offset:4px; background:#00236b; }
+
     </style>
 
 </head>
@@ -523,6 +529,14 @@
         Szerencsekerék 1.0
     </h1>
 
+
+
+    <!-- Második játék: külön oldalon, az eredeti Szerencsekerék megőrzésével -->
+    <section class="panel csillagsakk-valaszto" aria-labelledby="csillagsakkValasztoCim">
+        <h2 id="csillagsakkValasztoCim">Másik játékunk</h2>
+        <a href="csillagsakk.html">♟ POLGÁR-CSILLAGSAKK megnyitása</a>
+        <p>A csillagsakk külön oldalon indul. A Szerencsekerék itt továbbra is változatlanul játszható.</p>
+    </section>
 
     <!-- ========================================= -->
     <!-- BELÉPÉS -->
