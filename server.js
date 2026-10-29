@@ -2515,8 +2515,14 @@ function chessSend(client, data) {
     if (client.readyState === 1) client.send(JSON.stringify(data));
 }
 function chessPresence(room) {
-    const players = [...room.clients].filter(c => c.chessRole === 'white' || c.chessRole === 'black').length;
-    for (const client of room.clients) chessSend(client, { type: 'presence', players });
+    const roster = { white: null, black: null };
+    for (const client of room.clients) {
+        if (client.chessRole === 'white' || client.chessRole === 'black') {
+            roster[client.chessRole] = client.chessName;
+        }
+    }
+    const players = Number(Boolean(roster.white)) + Number(Boolean(roster.black));
+    for (const client of room.clients) chessSend(client, { type: 'presence', players, roster });
 }
 server.on('upgrade', (request, socket, head) => {
     let url;
