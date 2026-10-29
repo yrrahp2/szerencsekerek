@@ -10,7 +10,8 @@
 <button id="closeInstructions" type="button">Bezárás, vissza a játékhoz</button></dialog><div class="panel" id="setupPanel"><strong>♟️ Tisztek felrakása</strong><p id="setupText">Először a tiszteket helyezzük fel.</p><div id="piecePicker" role="group" aria-label="Válassz felhelyezendő tisztet"></div></div><section id="netPanel" hidden style="background:#223a5b;padding:15px;border-radius:12px;margin:12px 0"><h2>🌐 Online játékszoba (13.0 próba)</h2><p id="netstatus" role="status" aria-live="polite">Az online kapcsolat csak a szerver elindítása után működik. Ez most előnézet.</p><p>Szobakód: <strong id="roomcode"></strong> · Szereped: <strong id="myrole">várakozás</strong></p><button id="copyinvite" type="button">Meghívólink másolása</button><p>Az első belépő világos, a második sötét. A visszavonás és az újrakezdés az online próbában tiltott.</p></section><div class="columns"><main><div id="board" class="board" role="group" aria-label="Csillagsakk próbatábla, 37 mező"></div></main><aside class="panel"><div id="status" role="status" aria-live="polite">Lépésellenőrzéses próbatábla.</div><button id="f2">F2: teljes állás</button><button id="f3">F3: pontos bábuhelyek</button><button id="capturedReport">L: leütött figurák</button><button id="q">Q: kilépés</button><section class="capturedBox" aria-label="Leütött figurák"><h2 style="margin:0">♟️ Leütött figurák</h2><p class="capturedLabel">Világos által leütött sötét figurák:</p><div id="takenBlack" class="capturedRow" aria-label="Leütött sötét figurák"></div><p class="capturedLabel">Sötét által leütött világos figurák:</p><div id="takenWhite" class="capturedRow" aria-label="Leütött világos figurák"></div><p id="takenSummary" role="status" aria-live="polite" style="font-size:14px">Még nincs leütött figura.</p></section><h2>JAWS által olvasható állás</h2><h2>Lépésnapló</h2><ol id="history" aria-label="Korábbi lépések" style="max-height:180px;overflow:auto;padding-left:24px"></ol><div id="readout" role="region" aria-label="Játékállás részletei" tabindex="0">Nyomd meg az F2-t a teljes álláshoz.</div></aside></div><p class="note">A vastaps valódi hangfelvétel, a HTML-fájlba beágyazva. A visszavonás és átváltozás tesztfunkciók. A felrakás váltakozó sorrendje forrással alátámasztott, de a jelenlegi 37 mezős próbatábla alapsori mezői és számozása még NEM az eredeti Polgár-tábla alapján hitelesítettek. A sakk és matt ellenőrzése a prototípus mozgásszabályaira épül; a teljes Polgár-szabályzat még ellenőrzés alatt áll. A nyílbillentyűkkel navigálhatsz, Enterrel vagy Szóközzel választhatsz.</p></div><script>
 (()=>{const B=document.getElementById('board'),S=document.getElementById('status'),R=document.getElementById('readout');const room=new URLSearchParams(location.search).get('room')||'PROBA';
 const WS_PROTO=location.protocol==='https:'?'wss:':'ws:';
-const ws=location.protocol==='file:'?null:new WebSocket(WS_PROTO+'//'+location.host+'/ws?room='+encodeURIComponent(room));
+const playerName=new URLSearchParams(location.search).get('player');
+const ws=location.protocol==='file:'||!playerName?null:new WebSocket(WS_PROTO+'//'+location.host+'/ws?room='+encodeURIComponent(room)+'&player='+encodeURIComponent(playerName));
 let myRole='spectator',connected=false,remoteApplying=false,netVersion=0;let gameMode='menu',aiBusy=false;
 // Helyi előnézeti kapcsoló, NEM felhasználóazonosítás vagy biztonsági védelem.
 const privateHintEnabled=true; // Csak a külön Renáta-változatban aktív.
@@ -20,7 +21,7 @@ document.getElementById('roomcode').textContent=room;
 document.getElementById('copyinvite').onclick=async()=>{const url=location.origin+location.pathname+'?room='+encodeURIComponent(room);try{await navigator.clipboard.writeText(url);netStatus.textContent='Meghívólink másolva: küldd el Petrának!';}catch(e){netStatus.textContent='Másold ki a címsorból a meghívólinket: '+url;}};
 function exportState(){return {captured:{white:[...captured.white],black:[...captured.black]},pieces:{...pieces},turn,phase,remaining:{white:[...remaining.white],black:[...remaining.black]},moveCount,gameOver,history:[...history]};}
 function importState(x){remoteApplying=true;captured=x.captured?{white:[...x.captured.white],black:[...x.captured.black]}:{white:[],black:[]};pieces={...x.pieces};turn=x.turn;phase=x.phase;remaining={white:[...x.remaining.white],black:[...x.remaining.black]};moveCount=x.moveCount;gameOver=x.gameOver;history=[...x.history];selected=null;toPlace=null;suggestedSetupCell=null;snapshots=[];updateHistory();updateSetup();render();renderCaptured();remoteApplying=false;}
-function publishState(){if(gameMode!=='online'||remoteApplying||!connected)return;ws.send(JSON.stringify({type:'state',version:netVersion,state:exportState()}));}
+function publishState(){if(gameMode!=='online'||remoteApplying||!connected||!ws||ws.readyState!==1)return;ws.send(JSON.stringify({type:'state',version:netVersion,state:exportState()}));}
 function canAct(){if(gameMode==='menu'){S.textContent='Először válassz játékmódot a menüben.';return false;}if(gameMode==='practice')return true;if(gameMode==='computer')return turn==='white'&&!aiBusy;if(!connected){S.textContent='Várj, amíg az online kapcsolat létrejön.';return false;}if(myRole!==turn){S.textContent='Most '+colorName(turn)+' következik. Te '+(myRole==='white'?'világos':'sötét')+' vagy.';return false;}return true;}
 if(ws)ws.onmessage=e=>{let msg;try{msg=JSON.parse(e.data)}catch{return}
  if(msg.type==='welcome'){connected=true;myRole=msg.role;document.getElementById('myrole').textContent=({white:'Világos',black:'Sötét',spectator:'Néző'})[myRole];netStatus.textContent=myRole==='spectator'?'A szoba megtelt, nézőként csatlakoztál.':'Csatlakozva. Várjuk a másik játékost.';netVersion=msg.version;if(msg.state)importState(msg.state);}
@@ -281,7 +282,7 @@ function scheduleAI(){
 }
 function placeAI(c){const previous=gameMode;gameMode='practice';place(c);gameMode=previous;}
 function chooseAI(from,to){const previous=gameMode;gameMode='practice';selected=from.id;choose(to);gameMode=previous;}
-function startMode(mode){
+window.startMode=function startMode(mode){
  gameMode=mode;aiBusy=false;
  document.getElementById('modeText').textContent=mode==='computer'?'A számítógép sötéttel játszik. Te vagy világos.':mode==='practice'?'Gyakorlómód: mindkét féllel te léphetsz.': 'Online mód: szerverkapcsolat szükséges a közös játszmához.';
  document.getElementById('netPanel').hidden=mode!=='online';
@@ -330,11 +331,11 @@ document.getElementById('onlineLoginForm').addEventListener('submit',function(ev
  const roomChanged=(params.get('room')||'PROBA')!==selectedRoom;
  params.set('room',selectedRoom);params.set('player',name);
  document.getElementById('onlineLoginDialog').close();
- if(roomChanged){location.search=params.toString();return;}
+ if(roomChanged||new URLSearchParams(location.search).get('player')!==name){location.search=params.toString();return;}
  startMode('online');
  const label=document.getElementById('modeText');
- if(label)label.textContent='Online játékos: '+name+' | Szoba: '+selectedRoom+'. A kétjátékos kapcsolat a szerver bekötése után lesz használható.';
+ if(label)label.textContent='Online játékos: '+name+' | Szoba: '+selectedRoom+'. Várjuk a másik játékost.';
 });
 // Szobaváltás miatti újratöltéskor a belépő ne vesszen el.
-(function(){const p=new URLSearchParams(location.search);if(p.has('player')&&p.has('room')){startMode('online');const label=document.getElementById('modeText');if(label)label.textContent='Online játékos: '+p.get('player')+' | Szoba: '+p.get('room')+'. A szerverkapcsolat még ellenőrzésre vár.';}})();
+(function(){const p=new URLSearchParams(location.search);if(p.has('player')&&p.has('room')){startMode('online');const label=document.getElementById('modeText');if(label)label.textContent='Online játékos: '+p.get('player')+' | Szoba: '+p.get('room')+'. Kapcsolódás folyamatban.';}})();
 </script></body></html>
