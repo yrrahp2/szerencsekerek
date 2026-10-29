@@ -27,10 +27,16 @@ if(ws)ws.onmessage=e=>{let msg;try{msg=JSON.parse(e.data)}catch{return}
  if(msg.type==='welcome'){connected=true;myRole=msg.role;document.getElementById('myrole').textContent=({white:'Világos',black:'Sötét',spectator:'Néző'})[myRole];netStatus.textContent=myRole==='spectator'?'A szoba megtelt, nézőként csatlakoztál.':'Csatlakozva. Várjuk a másik játékost.';netVersion=msg.version;if(msg.state)importState(msg.state);}
  if(msg.type==='state'){netVersion=msg.version;importState(msg.state);S.textContent=history.at(-1)||'A játékállás frissült.';R.textContent=S.textContent;}
  if(msg.type==='accepted'){netVersion=msg.version;}
- if(msg.type==='presence'){netStatus.textContent=msg.players===2?'Mindkét játékos csatlakozott. Jó játékot!':'Egy játékos csatlakozott. Várjuk a másikat.';}
+ if(msg.type==='presence'){
+  const ready=msg.players>=2;
+  const status=myRole==='spectator'?'Nézőként csatlakoztál. A játékoshelyek foglaltak.':ready?'Mindkét játékos csatlakozott. Jó játékot!':'Várjuk a másik játékost.';
+  netStatus.textContent=status;
+  const modeLabel=document.getElementById('modeText');
+  if(modeLabel&&gameMode==='online')modeLabel.textContent='Online játékos: '+(playerName||'')+' | Szoba: '+room+'. '+status;
+ }
  if(msg.type==='error'){netStatus.textContent='Online hiba: '+msg.message;}
 };
-if(ws)ws.onclose=()=>{connected=false;netStatus.textContent='Megszakadt a kapcsolat. A helyi előnézet nem kapcsolódik a szerverhez.';};
+if(ws)ws.onclose=()=>{connected=false;const status='Megszakadt a kapcsolat. Frissítsd az oldalt az újracsatlakozáshoz.';netStatus.textContent=status;const label=document.getElementById('modeText');if(label&&gameMode==='online')label.textContent=status;};
 const glyph={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};let captured={white:[],black:[]};let cells=[],pieces={},selected=null,focus=0,exited=false,turn="white",moveCount=0;let phase="setup",toPlace=null,remaining={},home={},snapshots=[],history=[];let suggestedSetupCell=null;const SP=document.getElementById("setupPanel"),ST=document.getElementById("setupText"),PP=document.getElementById("piecePicker");
 let soundEnabled=true, audioCtx=null;
 let applauseTimer=null;
@@ -292,7 +298,7 @@ window.startMode=function startMode(mode){
  init();
  if(mode==='online')S.textContent='Online mód. A kapcsolat csak működő szerverrel jön létre.';
 }
-document.getElementById('modeOnline').onclick=()=>{const p=new URLSearchParams(location.search);document.getElementById('onlinePlayerName').value=p.get('player')||'';document.getElementById('onlineRoomName').value=p.get('room')||'CSILLAG';const dlg=document.getElementById('onlineLoginDialog');if(!dlg.open)dlg.showModal();document.getElementById('onlinePlayerName').focus();};
+document.getElementById('modeOnline').onclick=()=>startMode('online');
 document.getElementById('modeComputer').onclick=()=>startMode('computer');
 document.getElementById('modePractice').onclick=()=>startMode('practice');
 function report(detail){let light=cells.filter(c=>pieces[c.id]&&pieces[c.id]===pieces[c.id].toUpperCase()),dark=cells.filter(c=>pieces[c.id]&&pieces[c.id]!==pieces[c.id].toUpperCase());let text=(phase==='setup'?'Tisztek felrakása folyamatban. ':'Teljes játékállás. ')+(turn==='white'?'Világos':'Sötét')+' következik. Eddig '+moveCount+' lépés történt. Világos: '+light.length+' figura. Sötét: '+dark.length+' figura. Online próba: a szabályok még nem hitelesített Polgár-szabályok.';if(detail)text+='\nVilágos figurák:\n'+light.map(desc).join('; ')+'.\nSötét figurák:\n'+dark.map(desc).join('; ')+'.';R.textContent=text;R.focus();S.textContent=detail?'Részletes bábuhelyek megnyitva.':'Teljes játékállás megnyitva.';}
