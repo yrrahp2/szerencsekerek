@@ -292,7 +292,7 @@ window.startMode=function startMode(mode){
  init();
  if(mode==='online')S.textContent='Online mód. A kapcsolat csak működő szerverrel jön létre.';
 }
-document.getElementById('modeOnline').onclick=()=>startMode('online');
+document.getElementById('modeOnline').onclick=()=>{const p=new URLSearchParams(location.search);document.getElementById('onlinePlayerName').value=p.get('player')||'';document.getElementById('onlineRoomName').value=p.get('room')||'CSILLAG';const dlg=document.getElementById('onlineLoginDialog');if(!dlg.open)dlg.showModal();document.getElementById('onlinePlayerName').focus();};
 document.getElementById('modeComputer').onclick=()=>startMode('computer');
 document.getElementById('modePractice').onclick=()=>startMode('practice');
 function report(detail){let light=cells.filter(c=>pieces[c.id]&&pieces[c.id]===pieces[c.id].toUpperCase()),dark=cells.filter(c=>pieces[c.id]&&pieces[c.id]!==pieces[c.id].toUpperCase());let text=(phase==='setup'?'Tisztek felrakása folyamatban. ':'Teljes játékállás. ')+(turn==='white'?'Világos':'Sötét')+' következik. Eddig '+moveCount+' lépés történt. Világos: '+light.length+' figura. Sötét: '+dark.length+' figura. Online próba: a szabályok még nem hitelesített Polgár-szabályok.';if(detail)text+='\nVilágos figurák:\n'+light.map(desc).join('; ')+'.\nSötét figurák:\n'+dark.map(desc).join('; ')+'.';R.textContent=text;R.focus();S.textContent=detail?'Részletes bábuhelyek megnyitva.':'Teljes játékállás megnyitva.';}
