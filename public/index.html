@@ -519,6 +519,7 @@
 /* A kezdőképernyőn csak a két játék látható. */
 body.menu-home {background:radial-gradient(circle at top,#164d9b 0%,#081b42 76%);min-height:100vh}
 body.menu-home main > :not(#fomenu) {display:none !important}
+ body.menu-chess main > :not(#csillagsakkBelepesPanel) {display:none !important}
 body:not(.menu-home) #fomenu {display:none !important}
 .fomenu {max-width:760px;margin:8vh auto 0;text-align:center;padding:38px 28px;background:#fff;color:#14233f;border:4px solid #ffcf4d;border-radius:22px;box-shadow:0 18px 50px #0006}
 .fomenu h1 {font-size:clamp(28px,4vw,43px);margin:0 0 30px}
@@ -542,8 +543,26 @@ body:not(.menu-home) #fomenu {display:none !important}
       <h1 id="fomenuCim">🎮 Válassz játékot!</h1>
       <nav aria-label="Játékok">
         <a class="jatekKartya" href="#szerencsekerek" id="szerencsekerekInditas">🎡 SZERENCSEKERÉK</a>
-        <a class="jatekKartya" href="csillagsakk.html">♟️ POLGÁR-CSILLAGSAKK</a>
+        <a class="jatekKartya" href="#csillagsakk-belepes" id="csillagsakkInditas">♟️ POLGÁR-CSILLAGSAKK</a>
       </nav>
+    </section>
+    <section id="csillagsakkBelepesPanel" class="panel" hidden aria-labelledby="csillagsakkBelepesCim" style="max-width:760px;margin:25px auto;color:#111;">
+      <h2 id="csillagsakkBelepesCim" tabindex="-1">♟️ Polgár-csillagsakk: belépés</h2>
+      <p>Írd be a neved és a közös szobakódot. Mindkét játékos ugyanazt a szobakódot használja.</p>
+      <form id="csillagsakkBelepesForm">
+        <label for="csillagsakkJatekosNev">Játékos neve</label>
+        <input id="csillagsakkJatekosNev" type="text" maxlength="40" autocomplete="nickname" required placeholder="Például: Petra">
+        <label for="csillagsakkSzobakod">Szobakód</label>
+        <input id="csillagsakkSzobakod" type="text" maxlength="40" required value="CSILLAG" autocomplete="off">
+        <fieldset style="margin-top:20px;border:2px solid #003399;border-radius:8px;">
+          <legend style="font-size:20px;font-weight:bold;">Melyik változatot nyitod meg?</legend>
+          <label style="font-size:18px;font-weight:normal;"><input type="radio" name="csillagsakkValtozat" value="csillagsakk.html" checked style="width:auto;"> Petra változata (JAWS, súgás nélkül)</label>
+          <label style="font-size:18px;font-weight:normal;"><input type="radio" name="csillagsakkValtozat" value="csillagsakk-renata.html" style="width:auto;"> Renáta változata (S súgóval)</label>
+        </fieldset>
+        <button type="submit">♟️ Belépés a játékba</button>
+        <button type="button" id="csillagsakkVisszaGomb">🏠 Vissza a játékválasztóhoz</button>
+      </form>
+      <p id="csillagsakkBelepesUzenet" role="status" aria-live="polite"></p>
     </section>
     <div id="szerencsekerekFejlec" class="szerencsekerekFejlec" hidden>
       <button type="button" id="visszaFomenu" class="visszaGomb">🏠 Vissza a játékválasztóhoz</button>
@@ -1266,15 +1285,33 @@ body:not(.menu-home) #fomenu {display:none !important}
   const back=document.getElementById('visszaFomenu');
   function show(){
     const playing=location.hash==='#szerencsekerek'||location.hash==='#belepes';
-    document.body.classList.toggle('menu-home',!playing);
+    const chess=location.hash==='#csillagsakk-belepes';
+    document.body.classList.toggle('menu-home',!playing&&!chess);
+    document.body.classList.toggle('menu-chess',chess);
+    document.getElementById('csillagsakkBelepesPanel').hidden=!chess;
     heading.hidden=!playing;
-    if(!playing){window.scrollTo(0,0);document.title='Válassz játékot';}
+    if(!playing&&!chess){window.scrollTo(0,0);document.title='Válassz játékot';}
+    else if(chess){document.title='Polgár-csillagsakk: belépés';}
     else document.title='Szerencsekerék 1.0';
   }
   back.addEventListener('click',function(){
     if(confirm('Visszalépsz a játékválasztóhoz? A folyamatban lévő játékot elhagyhatod.')){
       location.hash='menu';show();home.querySelector('h1').focus();
     }
+  });
+  const chessForm=document.getElementById('csillagsakkBelepesForm');
+  document.getElementById('csillagsakkVisszaGomb').addEventListener('click',function(){location.hash='menu';});
+  document.getElementById('csillagsakkInditas').addEventListener('click',function(){
+    setTimeout(function(){document.getElementById('csillagsakkBelepesCim').focus();},0);
+  });
+  chessForm.addEventListener('submit',function(event){
+    event.preventDefault();
+    const name=document.getElementById('csillagsakkJatekosNev').value.trim();
+    const room=document.getElementById('csillagsakkSzobakod').value.trim();
+    const status=document.getElementById('csillagsakkBelepesUzenet');
+    if(!name||!room){status.textContent='Add meg a játékos nevét és a szobakódot.';return;}
+    const page=chessForm.querySelector('input[name="csillagsakkValtozat"]:checked').value;
+    window.location.assign(page+'?room='+encodeURIComponent(room)+'&player='+encodeURIComponent(name));
   });
   home.querySelector('h1').setAttribute('tabindex','-1');
   window.addEventListener('hashchange',show);
