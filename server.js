@@ -2521,7 +2521,12 @@ function chessPresence(room) {
             roster[client.chessRole] = client.chessName;
         }
     }
-    const players = Number(Boolean(roster.white)) + Number(Boolean(roster.black));
+    if (room.reservations) {
+        for (const [role, reservation] of room.reservations) {
+            if (!roster[role]) roster[role] = reservation.name;
+        }
+    }
+    const players = [...room.clients].filter(c => c.chessRole === 'white' || c.chessRole === 'black').length;
     for (const client of room.clients) chessSend(client, { type: 'presence', players, roster });
 }
 server.on('upgrade', (request, socket, head) => {
@@ -2535,21 +2540,60 @@ server.on('upgrade', (request, socket, head) => {
         chessWss.emit('connection', ws, roomName, playerName);
     });
 });
+// Frissiteskor a regi kapcsolat rovid ideig meg megmaradhat.
+// A nev szerinti visszateres megorzi a vilagos/sotet szerepet.
+const CHESS_RECONNECT_GRACE_MS = 30000;
 chessWss.on('connection', (ws, roomName, playerName) => {
     let room = chessRooms.get(roomName);
-    if (!room) { room = { clients: new Set(), version: 0, state: null }; chessRooms.set(roomName, room); }
-    const occupied = new Set([...room.clients].map(c => c.chessRole));
-    ws.chessRole = !occupied.has('white') ? 'white' : !occupied.has('black') ? 'black' : 'spectator';
+    if (!room) {
+        room = { clients: new Set(), version: 0, state: null, reservations: new Map() };
+        chessRooms.set(roomName, room);
+    }
+    if (!room.reservations) room.reservations = new Map();
+
+    const normalizedName = playerName.toLocaleLowerCase('hu-HU');
+    let previousRole = null;
+    for (const old of [...room.clients]) {
+        if (old.chessName.toLocaleLowerCase('hu-HU') === normalizedName &&
+            (old.chessRole === 'white' || old.chessRole === 'black')) {
+            previousRole = old.chessRole;
+            // A regi lapot levaltjuk, igy nem foglal ket jatekoshelyet.
+            old.chessRole = 'spectator';
+            old.chessReplaced = true;
+            try { old.close(4001, 'Uj kapcsolat ugyanazzal a nevvel'); } catch {}
+            room.clients.delete(old);
+        }
+    }
+    if (!previousRole) {
+        for (const [role, reservation] of room.reservations) {
+            if (reservation.name.toLocaleLowerCase('hu-HU') === normalizedName) {
+                previousRole = role;
+                clearTimeout(reservation.timer);
+                room.reservations.delete(role);
+                break;
+            }
+        }
+    }
+    const occupied = new Set([
+        ...[...room.clients].map(c => c.chessRole),
+        ...room.reservations.keys()
+    ]);
+    ws.chessRole = previousRole ||
+        (!occupied.has('white') ? 'white' : !occupied.has('black') ? 'black' : 'spectator');
     ws.chessName = playerName;
     ws.chessRoom = roomName;
     room.clients.add(ws);
     chessSend(ws, { type: 'welcome', role: ws.chessRole, version: room.version, state: room.state });
     chessPresence(room);
+
     ws.on('message', raw => {
         let message;
         try { message = JSON.parse(String(raw)); } catch { return; }
         if (message.type !== 'state') return;
-        if (ws.chessRole === 'spectator') { chessSend(ws, { type:'error', message:'A nezo nem lephet.' }); return; }
+        if (ws.chessRole === 'spectator') {
+            chessSend(ws, { type:'error', message:'A nezo nem lephet.' });
+            return;
+        }
         if (!message.state || typeof message.state !== 'object' || Array.isArray(message.state)) return;
         if (JSON.stringify(message.state).length > 100000) return;
         if (message.version !== room.version) {
@@ -2563,12 +2607,26 @@ chessWss.on('connection', (ws, roomName, playerName) => {
         room.state = message.state;
         room.version += 1;
         chessSend(ws, { type:'accepted', version:room.version });
-        for (const other of room.clients) if (other !== ws) chessSend(other, { type:'state', version:room.version, state:room.state });
+        for (const other of room.clients) {
+            if (other !== ws) chessSend(other, { type:'state', version:room.version, state:room.state });
+        }
     });
     ws.on('close', () => {
         room.clients.delete(ws);
-        if (!room.clients.size) chessRooms.delete(roomName);
-        else chessPresence(room);
+        if (!ws.chessReplaced && (ws.chessRole === 'white' || ws.chessRole === 'black')) {
+            const role = ws.chessRole;
+            const timer = setTimeout(() => {
+                const reserved = room.reservations.get(role);
+                if (reserved && reserved.timer === timer) {
+                    room.reservations.delete(role);
+                    chessPresence(room);
+                    if (!room.clients.size && !room.reservations.size) chessRooms.delete(roomName);
+                }
+            }, CHESS_RECONNECT_GRACE_MS);
+            room.reservations.set(role, { name: ws.chessName, timer });
+        }
+        chessPresence(room);
+        if (!room.clients.size && !room.reservations.size) chessRooms.delete(roomName);
     });
 });
 
