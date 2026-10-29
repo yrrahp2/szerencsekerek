@@ -2504,6 +2504,68 @@ io.on(
     }
 );
 
+
+// ==================================================
+// CSILLAGSAKK: kulon WebSocket szobak (nem erinti a Szerencsekereket)
+// ==================================================
+const { WebSocketServer } = require('ws');
+const chessWss = new WebSocketServer({ noServer: true, maxPayload: 1000000 });
+const chessRooms = new Map();
+function chessSend(client, data) {
+    if (client.readyState === 1) client.send(JSON.stringify(data));
+}
+function chessPresence(room) {
+    const players = [...room.clients].filter(c => c.chessRole === 'white' || c.chessRole === 'black').length;
+    for (const client of room.clients) chessSend(client, { type: 'presence', players });
+}
+server.on('upgrade', (request, socket, head) => {
+    let url;
+    try { url = new URL(request.url, 'http://localhost'); } catch { socket.destroy(); return; }
+    if (url.pathname !== '/ws') return; // Socket.IO a sajat upgrade-jeit kezeli
+    const roomName = (url.searchParams.get('room') || '').trim().slice(0, 40);
+    const playerName = (url.searchParams.get('player') || '').trim().slice(0, 30);
+    if (!roomName || !playerName) { socket.write('HTTP/1.1 400 Bad Request\r\n\r\n'); socket.destroy(); return; }
+    chessWss.handleUpgrade(request, socket, head, ws => {
+        chessWss.emit('connection', ws, roomName, playerName);
+    });
+});
+chessWss.on('connection', (ws, roomName, playerName) => {
+    let room = chessRooms.get(roomName);
+    if (!room) { room = { clients: new Set(), version: 0, state: null }; chessRooms.set(roomName, room); }
+    const occupied = new Set([...room.clients].map(c => c.chessRole));
+    ws.chessRole = !occupied.has('white') ? 'white' : !occupied.has('black') ? 'black' : 'spectator';
+    ws.chessName = playerName;
+    ws.chessRoom = roomName;
+    room.clients.add(ws);
+    chessSend(ws, { type: 'welcome', role: ws.chessRole, version: room.version, state: room.state });
+    chessPresence(room);
+    ws.on('message', raw => {
+        let message;
+        try { message = JSON.parse(String(raw)); } catch { return; }
+        if (message.type !== 'state') return;
+        if (ws.chessRole === 'spectator') { chessSend(ws, { type:'error', message:'A nezo nem lephet.' }); return; }
+        if (!message.state || typeof message.state !== 'object' || Array.isArray(message.state)) return;
+        if (JSON.stringify(message.state).length > 100000) return;
+        if (message.version !== room.version) {
+            chessSend(ws, { type:'state', version:room.version, state:room.state });
+            return;
+        }
+        if (room.state && room.state.turn !== ws.chessRole) {
+            chessSend(ws, { type:'error', message:'Nem te kovetkezel.' });
+            return;
+        }
+        room.state = message.state;
+        room.version += 1;
+        chessSend(ws, { type:'accepted', version:room.version });
+        for (const other of room.clients) if (other !== ws) chessSend(other, { type:'state', version:room.version, state:room.state });
+    });
+    ws.on('close', () => {
+        room.clients.delete(ws);
+        if (!room.clients.size) chessRooms.delete(roomName);
+        else chessPresence(room);
+    });
+});
+
 // ==================================================
 // SZERVER INDÍTÁSA
 // ==================================================
