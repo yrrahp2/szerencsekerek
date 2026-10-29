@@ -21,7 +21,7 @@ document.getElementById('copyinvite').onclick=async()=>{const url=location.origi
 function exportState(){return {captured:{white:[...captured.white],black:[...captured.black]},pieces:{...pieces},turn,phase,remaining:{white:[...remaining.white],black:[...remaining.black]},moveCount,gameOver,history:[...history]};}
 function importState(x){remoteApplying=true;captured=x.captured?{white:[...x.captured.white],black:[...x.captured.black]}:{white:[],black:[]};pieces={...x.pieces};turn=x.turn;phase=x.phase;remaining={white:[...x.remaining.white],black:[...x.remaining.black]};moveCount=x.moveCount;gameOver=x.gameOver;history=[...x.history];selected=null;toPlace=null;suggestedSetupCell=null;snapshots=[];updateHistory();updateSetup();render();renderCaptured();remoteApplying=false;}
 function publishState(){if(gameMode!=='online'||remoteApplying||!connected)return;ws.send(JSON.stringify({type:'state',version:netVersion,state:exportState()}));}
-function canAct(){if(gameMode==='menu'){S.textContent='Először válassz játékmódot a menüben.';return false;}if(gameMode==='practice')return true;if(gameMode==='computer')return turn==='white'&&!aiBusy;if(!connected){S.textContent='Várj, amíg az online kapcsolat létrejön.';return false;}if(myRole!==turn){S.textContent='Most '+colorName(turn)+' következik. Te '+(myRole==='white'?'világos':'sötét')+' vagy.';return false;}return true;}
+function canAct(){if(gameMode==='menu'){S.textContent='Először válassz játékmódot a menüben.';return false;}if(gameMode==='practice')return true;if(gameMode==='computer'){if(turn!=='white'||aiBusy){S.textContent='Most a számítógép következik. Várj egy pillanatot.';scheduleAI();return false;}return true;}if(!connected){S.textContent='Várj, amíg az online kapcsolat létrejön.';return false;}if(myRole!==turn){S.textContent='Most '+colorName(turn)+' következik. Te '+(myRole==='white'?'világos':'sötét')+' vagy.';return false;}return true;}
 if(ws)ws.onmessage=e=>{let msg;try{msg=JSON.parse(e.data)}catch{return}
  if(msg.type==='welcome'){connected=true;myRole=msg.role;document.getElementById('myrole').textContent=({white:'Világos',black:'Sötét',spectator:'Néző'})[myRole];netStatus.textContent=myRole==='spectator'?'A szoba megtelt, nézőként csatlakoztál.':'Csatlakozva. Várjuk a másik játékost.';netVersion=msg.version;if(msg.state)importState(msg.state);}
  if(msg.type==='state'){netVersion=msg.version;importState(msg.state);S.textContent=history.at(-1)||'A játékállás frissült.';R.textContent=S.textContent;}
@@ -128,7 +128,7 @@ function updateHistory(){const list=document.getElementById('history');list.inne
 function undo(){suggestedSetupCell=null;if(!snapshots.length){S.textContent='Nincs visszavonható lépés.';return;}const x=snapshots.pop();pieces=x.pieces;captured=x.captured||{white:[],black:[]};turn=x.turn;phase=x.phase;toPlace=x.toPlace;remaining=x.remaining;moveCount=x.moveCount;gameOver=x.gameOver;history=x.history;selected=null;updateHistory();renderCaptured();updateSetup();render();S.textContent='Az utolsó lépés visszavonva. '+colorName(turn)+' következik.';R.textContent=S.textContent;}
 function updateSetup(){SP.hidden=phase!=='setup';if(phase!=='setup')return;
 ST.textContent=colorName(turn)+' következik. Válassz egy tisztet, majd egy szabad, kiemelt mezőt a saját felrakási sorodon.';
-PP.innerHTML='';remaining[turn].forEach(p=>{const b=document.createElement('button');b.textContent=glyph[p]+' '+pieceName(p);b.setAttribute('aria-pressed',String(toPlace===p));b.onclick=()=>{toPlace=p;ST.textContent=colorName(turn)+' '+pieceName(p)+' kiválasztva. Kattints a kiemelt alapsori mezőre.';render();};PP.appendChild(b);});}
+PP.innerHTML='';remaining[turn].forEach(p=>{const b=document.createElement('button');b.textContent=glyph[p]+' '+pieceName(p);b.setAttribute('aria-pressed',String(toPlace===p));b.onclick=()=>{if(!canAct())return;toPlace=p;ST.textContent=colorName(turn)+' '+pieceName(p)+' kiválasztva. Kattints a kiemelt alapsori mezőre.';render();};if(gameMode==='computer'&&turn==='black')b.disabled=true;PP.appendChild(b);});if(gameMode==='computer'&&turn==='black')ST.textContent='A számítógép rakja fel a sötét tisztet. Kérlek, várj egy pillanatot.';}
 function place(c){if(!canAct())return;if(!toPlace){S.textContent='Először válassz egy tisztet a felrakási gombok közül.';return;}
 if(!home[turn].some(x=>x.id===c.id)||pieces[c.id]){S.textContent='Ide nem teheted a tisztet. Válassz egy üres, saját alapsori mezőt.';return;}
 saveSnapshot();suggestedSetupCell=null;const oldTurn=turn;pieces[c.id]=toPlace;remaining[turn]=remaining[turn].filter(p=>p!==toPlace);
@@ -193,7 +193,7 @@ let gameOver=false;
 function hint(){if(!privateHintEnabled)return;
  if(exited||gameOver){S.textContent='A játszma most nem folytatható.';return;}
  if(phase==='setup'){
-  if(myRole!=='white'||turn!=='white'){S.textContent='A súgás a világos játékosnak szól. Most sötét következik.';return;}
+  if(turn!=='white'){S.textContent=gameMode==='computer'?'Most a számítógép rakja fel a sötét tisztet. Várd meg a lépését, utána megmondom a világos figura pontos mezőjét.':'Most sötét következik. A világos súgás a világos körében kérhető.';if(gameMode==='computer')scheduleAI();return;} if(gameMode==='online'&&myRole!=='white'){S.textContent='A világos játékosnak szóló súgás most nem elérhető.';return;}
   const free=home.white.filter(c=>!pieces[c.id]);
   if(!free.length||!remaining.white.length){S.textContent='Már nincs felhelyezendő világos tiszt.';return;}
   // Egyszerű, átlátható próbastratégia: a királyt és a vezért középre, a bástyát szélre.
@@ -208,7 +208,7 @@ function hint(){if(!privateHintEnabled)return;
   return;
  }
  if(phase!=='play'){S.textContent='Most nem kérhető súgás.';return;}
- if(myRole!=='white'||turn!=='white'){S.textContent='A súgás csak világos lépésekor használható.';return;}
+ if(turn!=='white'){S.textContent=gameMode==='computer'?'A számítógép következik. Várd meg a sötét lépést, majd nyomd meg újra az S betűt.':'A világos súgás csak világos lépésekor használható.';if(gameMode==='computer')scheduleAI();return;} if(gameMode==='online'&&myRole!=='white'){S.textContent='Ez a súgás a világos játékosnak szól.';return;}
  const values={p:1,n:3,b:3,r:5,q:9,k:0};
  let best=null;
  for(const from of cells){
