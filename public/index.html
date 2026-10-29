@@ -515,6 +515,19 @@
         .csillagsakk-valaszto a { display:block; margin-bottom:12px; padding:17px; background:#003399; color:#fff; border-radius:8px; font-size:23px; font-weight:bold; text-decoration:none; }
         .csillagsakk-valaszto a:hover, .csillagsakk-valaszto a:focus { outline:4px solid #ffcc00; outline-offset:4px; background:#00236b; }
 
+
+/* A kezdőképernyőn csak a két játék látható. */
+body.menu-home {background:radial-gradient(circle at top,#164d9b 0%,#081b42 76%);min-height:100vh}
+body.menu-home main > :not(#fomenu) {display:none !important}
+body:not(.menu-home) #fomenu {display:none !important}
+.fomenu {max-width:760px;margin:8vh auto 0;text-align:center;padding:38px 28px;background:#fff;color:#14233f;border:4px solid #ffcf4d;border-radius:22px;box-shadow:0 18px 50px #0006}
+.fomenu h1 {font-size:clamp(28px,4vw,43px);margin:0 0 30px}
+.fomenu nav {display:grid;gap:22px}
+.jatekKartya {display:block;background:#07399e;color:white;padding:25px 15px;border-radius:13px;font-size:clamp(21px,2.5vw,29px);font-weight:800;text-decoration:none;border:3px solid transparent}
+.jatekKartya:hover,.jatekKartya:focus-visible {background:#00296f;border-color:#ffcf4d;outline:4px solid #ffcf4d;outline-offset:3px}
+.szerencsekerekFejlec .visszaGomb {background:#fff1bc;color:#11264e;border:3px solid #ffcc00;font-size:19px;padding:12px 18px;width:auto;margin:0}
+@media(max-width:520px){.fomenu{margin:5vh auto;padding:25px 16px}.jatekKartya{padding:20px 10px}}
+
     </style>
 
 </head>
@@ -525,19 +538,17 @@
 <main>
 
 
-    <h1>
-        Szerencsekerék 1.0
-    </h1>
-
-
-
-    <!-- Második játék: külön oldalon, az eredeti Szerencsekerék megőrzésével -->
-    <section class="panel csillagsakk-valaszto" aria-labelledby="csillagsakkValasztoCim">
-        <h2 id="csillagsakkValasztoCim">Válassz játékot!</h2>
-<a href="#belepes">🎡 SZERENCSEKERÉK MEGNYITÁSA</a>
-<a href="csillagsakk.html">♟ POLGÁR-CSILLAGSAKK MEGNYITÁSA</a>
-        <p>A csillagsakk külön oldalon indul. A Szerencsekerék itt továbbra is változatlanul játszható.</p>
+    <section id="fomenu" class="fomenu" aria-labelledby="fomenuCim">
+      <h1 id="fomenuCim">🎮 Válassz játékot!</h1>
+      <nav aria-label="Játékok">
+        <a class="jatekKartya" href="#szerencsekerek" id="szerencsekerekInditas">🎡 SZERENCSEKERÉK</a>
+        <a class="jatekKartya" href="csillagsakk.html">♟️ POLGÁR-CSILLAGSAKK</a>
+      </nav>
     </section>
+    <div id="szerencsekerekFejlec" class="szerencsekerekFejlec" hidden>
+      <button type="button" id="visszaFomenu" class="visszaGomb">🏠 Vissza a játékválasztóhoz</button>
+      <h1>Szerencsekerék 1.0</h1>
+    </div>
 
     <!-- ========================================= -->
     <!-- BELÉPÉS -->
@@ -1246,6 +1257,30 @@
 <script src="/client.js"></script>
 
 
+
+<script>
+/* Kizárólag a navigációt vezérli; a Szerencsekerék meglévő játékkódja változatlan. */
+(function(){
+  const home=document.getElementById('fomenu');
+  const heading=document.getElementById('szerencsekerekFejlec');
+  const back=document.getElementById('visszaFomenu');
+  function show(){
+    const playing=location.hash==='#szerencsekerek'||location.hash==='#belepes';
+    document.body.classList.toggle('menu-home',!playing);
+    heading.hidden=!playing;
+    if(!playing){window.scrollTo(0,0);document.title='Válassz játékot';}
+    else document.title='Szerencsekerék 1.0';
+  }
+  back.addEventListener('click',function(){
+    if(confirm('Visszalépsz a játékválasztóhoz? A folyamatban lévő játékot elhagyhatod.')){
+      location.hash='menu';show();home.querySelector('h1').focus();
+    }
+  });
+  home.querySelector('h1').setAttribute('tabindex','-1');
+  window.addEventListener('hashchange',show);
+  show();
+})();
+</script>
 </body>
 
 </html>
