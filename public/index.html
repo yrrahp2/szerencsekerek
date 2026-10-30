@@ -554,11 +554,10 @@ body:not(.menu-home) #fomenu {display:none !important}
         <input id="csillagsakkJatekosNev" type="text" maxlength="40" autocomplete="nickname" required placeholder="Például: Petra">
         <label for="csillagsakkSzobakod">Szobakód</label>
         <input id="csillagsakkSzobakod" type="text" maxlength="40" required value="CSILLAG" autocomplete="off">
-        <fieldset style="margin-top:20px;border:2px solid #003399;border-radius:8px;">
-          <legend style="font-size:20px;font-weight:bold;">Melyik változatot nyitod meg?</legend>
-          <label style="font-size:18px;font-weight:normal;"><input type="radio" name="csillagsakkValtozat" value="csillagsakk.html" checked style="width:auto;"> Petra változata (JAWS, súgás nélkül)</label>
-          <label style="font-size:18px;font-weight:normal;"><input type="radio" name="csillagsakkValtozat" value="csillagsakk-renata.html" style="width:auto;"> Renáta változata (S súgóval)</label>
-        </fieldset>
+        <div id="csillagsakkPinMezo" hidden>
+          <label for="csillagsakkPin">Négyjegyű belépési kód</label>
+          <input id="csillagsakkPin" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" autocomplete="off" placeholder="4 számjegy">
+        </div>
         <button type="submit">♟️ Belépés a játékba</button>
         <button type="button" id="csillagsakkVisszaGomb">🏠 Vissza a játékválasztóhoz</button>
       </form>
@@ -1304,14 +1303,41 @@ body:not(.menu-home) #fomenu {display:none !important}
   document.getElementById('csillagsakkInditas').addEventListener('click',function(){
     setTimeout(function(){document.getElementById('csillagsakkBelepesCim').focus();},0);
   });
-  chessForm.addEventListener('submit',function(event){
+  const chessNameInput=document.getElementById('csillagsakkJatekosNev');
+  const chessPinBox=document.getElementById('csillagsakkPinMezo');
+  const chessPinInput=document.getElementById('csillagsakkPin');
+  function chessUpdatePin(){
+    const renata=/^ren[aá]ta$/i.test(chessNameInput.value.trim());
+    chessPinBox.hidden=!renata;
+    chessPinInput.required=renata;
+    if(!renata) chessPinInput.value='';
+  }
+  chessNameInput.addEventListener('input',chessUpdatePin);
+  chessUpdatePin();
+  chessForm.addEventListener('submit',async function(event){
     event.preventDefault();
-    const name=document.getElementById('csillagsakkJatekosNev').value.trim();
+    const name=chessNameInput.value.trim();
     const room=document.getElementById('csillagsakkSzobakod').value.trim();
     const status=document.getElementById('csillagsakkBelepesUzenet');
     if(!name||!room){status.textContent='Add meg a játékos nevét és a szobakódot.';return;}
-    const page=chessForm.querySelector('input[name="csillagsakkValtozat"]:checked').value;
-    window.location.assign(page+'?room='+encodeURIComponent(room)+'&player='+encodeURIComponent(name));
+    const renata=/^ren[aá]ta$/i.test(name);
+    const destination=(renata?'csillagsakk-renata.html':'csillagsakk.html')+
+      '?room='+encodeURIComponent(room)+'&player='+encodeURIComponent(name);
+    if(!renata){window.location.assign(destination);return;}
+    const pin=chessPinInput.value;
+    if(!/^\\d{4}$/.test(pin)){status.textContent='Négy számjegyű PIN-kódot adj meg.';return;}
+    status.textContent='Belépési kód ellenőrzése...';
+    try{
+      const response=await fetch('/api/csillagsakk/renata-login',{
+        method:'POST',credentials:'same-origin',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name:name,pin:pin})
+      });
+      const result=await response.json();
+      if(!response.ok){status.textContent=result.error||'Nem sikerült a belépés.';return;}
+      chessPinInput.value='';
+      window.location.assign(destination);
+    }catch(error){status.textContent='Nem sikerült kapcsolódni a szerverhez.';}
   });
   home.querySelector('h1').setAttribute('tabindex','-1');
   window.addEventListener('hashchange',show);
