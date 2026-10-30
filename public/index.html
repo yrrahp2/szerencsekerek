@@ -1325,7 +1325,7 @@ body:not(.menu-home) #fomenu {display:none !important}
       '?room='+encodeURIComponent(room)+'&player='+encodeURIComponent(name);
     if(!renata){window.location.assign(destination);return;}
     const pin=chessPinInput.value;
-    if(!/^\\d{4}$/.test(pin)){status.textContent='Négy számjegyű PIN-kódot adj meg.';return;}
+    if(!/^\d{4}$/.test(pin)){status.textContent='Négy számjegyű PIN-kódot adj meg.';return;}
     status.textContent='Belépési kód ellenőrzése...';
     try{
       const response=await fetch('/api/csillagsakk/renata-login',{
