@@ -71,6 +71,84 @@ const KEREK_ERTEKEK = [
     "KIMARADSZ"
 ];
 
+
+// CSILLAGSAKK: szerveroldali PIN-ellenőrzés, külön a Szerencsekeréktől.
+const crypto = require('crypto');
+const chessLoginSessions = new Map();
+const chessLoginAttempts = new Map();
+const CHESS_SESSION_LIFETIME = 12 * 60 * 60 * 1000;
+
+function chessCookieValue(request) {
+    const cookie = String(request.headers.cookie || '');
+    const match = cookie.match(/(?:^|;\s*)chess_renata_session=([a-f0-9]{64})(?:;|$)/);
+    return match ? match[1] : '';
+}
+function chessAuthorized(request) {
+    const token = chessCookieValue(request);
+    const expires = chessLoginSessions.get(token);
+    if (!expires) return false;
+    if (expires < Date.now()) {
+        chessLoginSessions.delete(token);
+        return false;
+    }
+    return true;
+}
+
+// A védett HTML-t a statikus fájlkezelő ELŐTT ellenőrizzük.
+app.get('/csillagsakk-renata.html', (request, response) => {
+    if (!chessAuthorized(request)) {
+        return response.redirect('/index.html#csillagsakk-belepes');
+    }
+    response.set('Cache-Control', 'no-store');
+    response.sendFile(path.join(__dirname, 'public', 'csillagsakk-renata.html'));
+});
+
+app.post('/api/csillagsakk/renata-login',
+    express.json({ limit: '2kb' }),
+    (request, response) => {
+        response.set('Cache-Control', 'no-store');
+        const configuredPin = String(process.env.RENATA_PIN || '').trim();
+        if (!/^\d{4}$/.test(configuredPin)) {
+            return response.status(503).json({
+                error: 'A négyjegyű belépési PIN még nincs beállítva a szerveren.'
+            });
+        }
+        const forwarded = String(request.headers['x-forwarded-for'] || '').split(',')[0].trim();
+        const address = forwarded || request.socket.remoteAddress || 'unknown';
+        const now = Date.now();
+        const attempts = chessLoginAttempts.get(address) || { count: 0, until: now + 15 * 60 * 1000 };
+        if (now > attempts.until) {
+            attempts.count = 0;
+            attempts.until = now + 15 * 60 * 1000;
+        }
+        if (attempts.count >= 8) {
+            return response.status(429).json({ error: 'Túl sok próbálkozás. Próbáld újra 15 perc múlva.' });
+        }
+        const name = String(request.body && request.body.name || '').trim();
+        const pin = String(request.body && request.body.pin || '');
+        if (name.toLocaleLowerCase('hu-HU') !== 'renáta' &&
+            name.toLocaleLowerCase('hu-HU') !== 'renata') {
+            return response.status(400).json({ error: 'Ehhez a belépéshez a Renáta nevet kell megadni.' });
+        }
+        const valid = /^\d{4}$/.test(pin) &&
+            crypto.timingSafeEqual(Buffer.from(pin), Buffer.from(configuredPin));
+        if (!valid) {
+            attempts.count += 1;
+            chessLoginAttempts.set(address, attempts);
+            return response.status(401).json({ error: 'Hibás PIN-kód.' });
+        }
+        chessLoginAttempts.delete(address);
+        const token = crypto.randomBytes(32).toString('hex');
+        chessLoginSessions.set(token, now + CHESS_SESSION_LIFETIME);
+        response.cookie('chess_renata_session', token, {
+            httpOnly: true, sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: CHESS_SESSION_LIFETIME, path: '/'
+        });
+        response.json({ ok: true });
+    }
+);
+
 // ==================================================
 // PUBLIC MAPPA
 // ==================================================
