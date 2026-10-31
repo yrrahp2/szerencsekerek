@@ -516,7 +516,7 @@
         .csillagsakk-valaszto a:hover, .csillagsakk-valaszto a:focus { outline:4px solid #ffcc00; outline-offset:4px; background:#00236b; }
 
 
-/* A kezdőképernyőn csak a két játék látható. */
+/* A kezdőképernyőn a három játék látható. */
 body.menu-home {background:radial-gradient(circle at top,#164d9b 0%,#081b42 76%);min-height:100vh}
 body.menu-home main > :not(#fomenu) {display:none !important}
  body.menu-chess main > :not(#csillagsakkBelepesPanel) {display:none !important}
@@ -544,6 +544,7 @@ body:not(.menu-home) #fomenu {display:none !important}
       <nav aria-label="Játékok">
         <a class="jatekKartya" href="#szerencsekerek" id="szerencsekerekInditas">🎡 SZERENCSEKERÉK</a>
         <a class="jatekKartya" href="#csillagsakk-belepes" id="csillagsakkInditas">♟️ POLGÁR-CSILLAGSAKK</a>
+        <a class="jatekKartya" href="/szokavalkad/" id="szokavalkadInditas">🏆 SZÓKAVALKÁD, 10 000 SZÓVAL!</a>
       </nav>
     </section>
     <section id="csillagsakkBelepesPanel" class="panel" hidden aria-labelledby="csillagsakkBelepesCim" style="max-width:760px;margin:25px auto;color:#111;">

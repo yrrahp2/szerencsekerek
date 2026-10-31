@@ -16,6 +16,7 @@ const {
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+require('./szokavalkad-server.js')(app, io);
 
 // ==================================================
 // BEÁLLÍTÁSOK
