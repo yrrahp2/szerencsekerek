@@ -55,7 +55,7 @@ io.on('connection',socket=>{
  socket.on('savegame',()=>{const r=rooms.get(socket.data.code);if(!r||!r.players.has(socket.id))return;
   const key=nameKey(r.roomName);
   saves[key]={roomName:r.roomName,gameType:r.gameType,mode:r.mode,target:r.target,auto:r.auto,players:[...r.players.values()].map(p=>({name:p.name,score:p.score})),savedAt:new Date().toISOString()};
-  if(saveAll())io.to(r.code).emit('notice','A játékállás elmentve. Később a szoba nevével folytathatjátok.');else socket.emit('notice','Nem sikerült a mentés a szerveren.');
+  if(saveAll()){socket.emit('save-result',{ok:true});}else{socket.emit('save-result',{ok:false});}
  });
  socket.on('loadgame',()=>{const r=rooms.get(socket.data.code);if(!r||!r.players.has(socket.id))return;
   const saved=saves[nameKey(r.roomName)];if(!saved){socket.emit('notice','Ehhez a szobához nincs mentett játék.');return;}
