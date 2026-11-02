@@ -16,7 +16,6 @@ const {
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-require('./szokavalkad-server.js')(app, io);
 
 // ==================================================
 // BEÁLLÍTÁSOK
@@ -2708,6 +2707,9 @@ chessWss.on('connection', (ws, roomName, playerName) => {
         if (!room.clients.size && !room.reservations.size) chessRooms.delete(roomName);
     });
 });
+
+// Szókavalkád külön Socket.IO névtérrel, a meglévő játékoktól függetlenül.
+require('./szokavalkad-server')(app, io);
 
 // ==================================================
 // SZERVER INDÍTÁSA
